@@ -1,0 +1,422 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Install and Enable UFW
+  summary: Installs and activates UFW firewall
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com/contactus
+  license: agpl-3
+records:
+- cetmix_tower_model: plan
+  access_level: manager
+  reference: install_and_enable_ufw
+  name: Install and enable UFW
+  allow_parallel_run: false
+  color: 0
+  tag_ids:
+  - reference: firewall
+    name: firewall
+    color: 9
+  note: |-
+    Install and run UFW on servers that don't support Jets.
+    Add a comma-separated list of IP addresses in the 'ssh_allow_list' variable from which the incoming SSH connections will be allowed.
+  on_error_action: e
+  custom_exit_code: 0
+  line_ids:
+  - reference: install_and_enable_ufw_plan_line_1
+    sequence: 10
+    condition: false
+    use_sudo: false
+    path: false
+    command_id:
+      access_level: manager
+      reference: plan_update_host_system
+      name: Update host system
+      action: plan
+      allow_parallel_run: false
+      note: Update and upgrade packages
+      tag_ids:
+      - reference: system
+        name: System
+        color: 1
+      path: false
+      flight_plan_id:
+        access_level: manager
+        reference: update_host_system_packages
+        name: Update host system packages
+        allow_parallel_run: false
+        color: 0
+        tag_ids:
+        - reference: system
+        note: |-
+          Update host system packages.
+          NB: some updates may require host restart.
+        on_error_action: e
+        custom_exit_code: 0
+        line_ids:
+        - reference: update_packages_4
+          sequence: 10
+          condition: false
+          use_sudo: true
+          path: false
+          command_id:
+            access_level: manager
+            reference: update_packages
+            name: Update packages
+            action: ssh_command
+            allow_parallel_run: false
+            note: false
+            os_ids:
+            - reference: debian_10
+              name: Debian 10
+              color: 1
+            - reference: debian_11
+              name: Debian 11
+              color: 1
+              parent_id:
+                reference: debian
+                name: Debian
+                color: 0
+            - reference: macos
+              name: MacOS
+              color: 4
+            - reference: ubuntu_1604
+              name: Ubuntu 16.04
+              color: 2
+            - reference: ubuntu_1804
+              name: Ubuntu 18.04
+              color: 2
+              parent_id:
+                reference: ubuntu
+                name: Ubuntu
+                color: 0
+            - reference: ubuntu_2004
+              name: Ubuntu 20.04
+              color: 1
+              parent_id:
+                reference: ubuntu
+            - reference: ubuntu_2204
+              name: Ubuntu 22.04
+              color: 2
+              parent_id:
+                reference: ubuntu
+            path: false
+            code: DEBIAN_FRONTEND=noninteractive apt-get update
+            server_status: false
+            no_split_for_sudo: false
+            if_file_exists: skip
+            disconnect_file: false
+          is_make_copy: false
+        - reference: upgrade_packages
+          sequence: 11
+          condition: false
+          use_sudo: true
+          path: false
+          command_id:
+            access_level: manager
+            reference: upgrade_packages
+            name: Upgrade packages
+            action: ssh_command
+            allow_parallel_run: false
+            note: false
+            os_ids:
+            - reference: debian_10
+            - reference: debian_11
+            - reference: macos
+            - reference: ubuntu_1604
+            - reference: ubuntu_1804
+            - reference: ubuntu_2004
+            - reference: ubuntu_2204
+            path: false
+            code: DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+            server_status: false
+            no_split_for_sudo: false
+            if_file_exists: skip
+            disconnect_file: false
+          is_make_copy: false
+      code: false
+      server_status: false
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    is_make_copy: false
+  - reference: install_and_enable_ufw_plan_line_2
+    sequence: 11
+    condition: false
+    use_sudo: false
+    path: false
+    command_id:
+      access_level: manager
+      reference: install_ufw
+      name: Install UFW
+      action: ssh_command
+      allow_parallel_run: false
+      note: Installs ACL. Used to set default access rights for directories
+      tag_ids:
+      - reference: install
+        name: Install
+        color: 6
+      - reference: system
+      - reference: firewall
+      path: false
+      code: apt install -y ufw
+      server_status: false
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    is_make_copy: false
+  - reference: install_and_enable_ufw_plan_line_3
+    sequence: 12
+    condition: false
+    use_sudo: false
+    path: false
+    command_id:
+      access_level: manager
+      reference: prepare_ufw_script
+      name: Prepare UFW script
+      action: plan
+      allow_parallel_run: false
+      note: false
+      tag_ids:
+      - reference: firewall
+      path: false
+      flight_plan_id:
+        access_level: manager
+        reference: upload_ufw_script
+        name: Upload UFW script
+        allow_parallel_run: false
+        color: 0
+        tag_ids:
+        - reference: firewall
+        note: Upload the UFW script and make it executable
+        on_error_action: e
+        custom_exit_code: 0
+        line_ids:
+        - reference: upload_ufw_script_plan_line_1
+          sequence: 10
+          condition: false
+          use_sudo: false
+          path: false
+          command_id:
+            access_level: manager
+            reference: upload_ufw_script
+            name: Upload UFW script
+            action: file_using_template
+            allow_parallel_run: false
+            note: false
+            tag_ids:
+            - reference: system
+            - reference: firewall
+            path: false
+            file_template_id:
+              reference: ufw_configuration_script
+              name: UFW configuration script
+              source: tower
+              file_type: text
+              server_dir: '{% if jet_root and "//" not in jet_root %}{{ jet_root }}/data{%
+                else %}{{ tower_root }}{% endif %}'
+              file_name: ufw_up.sh
+              keep_when_deleted: false
+              tag_ids:
+              - reference: firewall
+              note: Bash script that sets default UFW settings.
+              code: |
+                #!/usr/bin/env bash
+                set -euo pipefail
+
+                # Check if allow list is provided
+                SSH_ALLOW_LIST="{{ ssh_allow_list }}"
+
+                if [[ -z "$SSH_ALLOW_LIST" ]]; then
+                  echo "ERROR: ssh_allow_list variable is empty"
+                  exit 1
+                fi
+
+                # Reset to a known state
+                ufw --force reset
+
+                # Defaults
+                ufw default deny incoming
+                ufw default allow outgoing
+
+                # Set SSH allowlist
+                echo "Configuring SSH access for allowed IPs:"
+                echo "$SSH_ALLOW_LIST"
+                echo
+
+                # Split comma-separated list into array
+                IFS=',' read -ra IP_LIST <<< "$SSH_ALLOW_LIST"
+
+                for ip in "${IP_LIST[@]}"; do
+                  ip="$(echo "$ip" | xargs)"  # trim whitespace
+                  echo "Allowing SSH from $ip"
+                  ufw allow from "$ip" to any port 22 proto tcp comment "SSH from $ip"
+                done
+
+
+                # Web traffic
+                ufw allow 80/tcp comment 'HTTP'
+                ufw allow 443/tcp comment 'HTTPS'
+
+                # Outgoing mail (Odoo client)
+                for port in 25 465 587; do
+                  ufw allow out "${port}/tcp" comment "SMTP ${port}"
+                done
+
+                for port in 143 993; do
+                  ufw allow out "${port}/tcp" comment "IMAP ${port}"
+                done
+
+                for port in 110 995; do
+                  ufw allow out "${port}/tcp" comment "POP3 ${port}"
+                done
+
+                # Enable firewall
+                ufw --force enable
+
+                # Enable logging
+                ufw logging low
+
+                echo
+                echo "UFW enabled with the following rules:"
+                ufw status verbose
+              variable_ids:
+              - access_level: manager
+                reference: jet_root
+                name: Jet Root
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: false
+              - access_level: manager
+                reference: ssh_allow_list
+                name: SSH Allow list
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: List of IP addressed from which SSH connection is allowed
+              - access_level: manager
+                reference: tower_root
+                name: Tower Root
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+                validation_message: false
+                note: Root location of all Cetmix Tower files
+            code: false
+            server_status: false
+            no_split_for_sudo: false
+            if_file_exists: skip
+            disconnect_file: false
+          is_make_copy: false
+        - reference: upload_ufw_script_plan_line_2
+          sequence: 10
+          condition: false
+          use_sudo: true
+          path: false
+          command_id:
+            access_level: manager
+            reference: make_ufw_script_executable
+            name: Make UFW script executable
+            action: ssh_command
+            allow_parallel_run: false
+            note: false
+            tag_ids:
+            - reference: firewall
+            path: false
+            code: chmod +x {% if jet_root and "//" not in jet_root %}{{ jet_root }}/data/ufw_up.sh{%
+              else %}{{ tower_root }}/ufw_up.sh{% endif %}
+            server_status: false
+            variable_ids:
+            - reference: jet_root
+            - reference: tower_root
+            no_split_for_sudo: false
+            if_file_exists: skip
+            disconnect_file: false
+          is_make_copy: false
+      code: false
+      server_status: false
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    is_make_copy: false
+  - reference: install_and_enable_ufw_plan_line_4
+    sequence: 13
+    condition: false
+    use_sudo: false
+    path: false
+    command_id:
+      access_level: manager
+      reference: run_ufw_script
+      name: Run UFW script
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      tag_ids:
+      - reference: jets
+        name: Jets
+        color: 4
+      - reference: system
+      - reference: firewall
+      path: false
+      code: '{% if jet_root and "//" not in jet_root %}{{ jet_root }}/data{%else%}{{
+        tower_root }}{%endif%}/ufw_up.sh'
+      server_status: false
+      variable_ids:
+      - reference: jet_root
+      - reference: tower_root
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    is_make_copy: false
+- cetmix_tower_model: command
+  access_level: manager
+  reference: show_ufw_logs
+  name: Show UFW logs
+  action: ssh_command
+  allow_parallel_run: false
+  note: Get UFW logs
+  tag_ids:
+  - reference: system
+    name: System
+    color: 1
+  - reference: firewall
+    name: firewall
+    color: 9
+  path: false
+  code: journalctl -k --since {% if custom_value %}{{ custom_value }}{%else%}"10 minutes
+    ago"{%endif%} | grep UFW
+  server_status: false
+  variable_ids:
+  - access_level: manager
+    reference: custom_value
+    name: Custom Value
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      This is a generic variable that is meant to be used in various applications where some custom value needs to be provided.
+      Mostly likely it would be passed as a custom value or set dynamically in flight plans.
+  no_split_for_sudo: false
+  if_file_exists: skip
+  disconnect_file: false
+- cetmix_tower_model: command
+  access_level: manager
+  reference: list_active_connections
+  name: List active connections
+  action: ssh_command
+  allow_parallel_run: false
+  note: Show active server connections
+  path: false
+  code: ss -tulpen
+  server_status: false
+  no_split_for_sudo: false
+  if_file_exists: skip
+  disconnect_file: false

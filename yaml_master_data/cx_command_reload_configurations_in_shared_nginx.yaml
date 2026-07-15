@@ -1,0 +1,46 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Reload Nginx Configuration
+  summary: Reload configurations in the shared nginx container without restarting
+    it.
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com
+  license: AGPL-3
+records:
+- cetmix_tower_model: command
+  access_level: manager
+  reference: reload_configurations_in_shared_nginx
+  name: Reload configurations in shared nginx
+  action: ssh_command
+  allow_parallel_run: false
+  note: Reload configurations in the shared nginx container without restarting it.
+  tag_ids:
+  - reference: docker
+    name: Docker
+    color: 4
+  - reference: nginx
+    name: Nginx
+    color: 8
+  path: false
+  code: |
+    docker kill --signal=HUP {{ nginx_shared_container_name }}
+  server_status: false
+  variable_ids:
+  - access_level: manager
+    reference: nginx_shared_container_name
+    name: Shared Nginx container name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Name of the shared nginx with certbot container.
+      This container is used as a reverse proxy for Odoo.
+  no_split_for_sudo: false
+  if_file_exists: skip
+  disconnect_file: false

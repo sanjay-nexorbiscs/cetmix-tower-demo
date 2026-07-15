@@ -1,0 +1,103 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Update Host System
+  summary: Update the host system packages
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com
+  license: AGPL-3
+records:
+- cetmix_tower_model: plan
+  access_level: manager
+  reference: update_host_system_packages
+  name: Update host system packages
+  allow_parallel_run: false
+  color: 0
+  tag_ids:
+  - reference: system
+    name: System
+    color: 1
+  note: |-
+    Update host system packages.
+    NB: some updates may require host restart.
+  on_error_action: e
+  custom_exit_code: 0
+  line_ids:
+  - reference: update_packages_4
+    sequence: 10
+    condition: false
+    use_sudo: true
+    path: false
+    command_id:
+      access_level: manager
+      reference: update_packages
+      name: Update packages
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      os_ids:
+      - reference: debian_10
+        name: Debian 10
+        color: 1
+      - reference: debian_11
+        name: Debian 11
+        color: 1
+        parent_id:
+          reference: debian_10
+      - reference: macos
+        name: MacOS
+        color: 4
+      - reference: ubuntu_1604
+        name: Ubuntu 16.04
+        color: 2
+      - reference: ubuntu_1804
+        name: Ubuntu 18.04
+        color: 2
+        parent_id:
+          reference: ubuntu_1604
+      - reference: ubuntu_2004
+        name: Ubuntu 20.04
+        color: 1
+        parent_id:
+          reference: ubuntu_1804
+      - reference: ubuntu_2204
+        name: Ubuntu 22.04
+        color: 2
+        parent_id:
+          reference: ubuntu_2004
+      path: false
+      code: DEBIAN_FRONTEND=noninteractive apt-get update
+      server_status: false
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+  - reference: upgrade_packages
+    sequence: 11
+    condition: false
+    use_sudo: true
+    path: false
+    command_id:
+      access_level: manager
+      reference: upgrade_packages
+      name: Upgrade packages
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      os_ids:
+      - reference: debian_10
+      - reference: debian_11
+      - reference: macos
+      - reference: ubuntu_1604
+      - reference: ubuntu_1804
+      - reference: ubuntu_2004
+      - reference: ubuntu_2204
+      path: false
+      code: DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+      server_status: false
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false

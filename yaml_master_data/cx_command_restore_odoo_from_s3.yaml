@@ -1,0 +1,198 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Restore Odoo from S3
+  summary: Restore Odoo backup from Amazon S3
+  description: |-
+    Restores an Odoo database from a backup stored in Amazon S3.
+    You need to allow "ListBucket" and "GetObject". Below is a policy example:
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": ["s3:ListBucket"],
+          "Resource": "arn:aws:s3:::my-bucket"
+        },
+        {
+          "Effect": "Allow",
+          "Action": ["s3:GetObject"],
+          "Resource": "arn:aws:s3:::my-bucket/*"
+        }
+      ]
+    }
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com
+  license: AGPL-3
+records:
+- cetmix_tower_model: command
+  access_level: manager
+  reference: restore_odoo_from_s3
+  name: Restore Odoo DB from S3
+  action: ssh_command
+  allow_parallel_run: false
+  note: |-
+    Restores an Odoo database from a backup stored in Amazon S3.
+    You need to allow "ListBucket" and "GetObject". Below is a policy example:
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": ["s3:ListBucket"],
+          "Resource": "arn:aws:s3:::my-bucket"
+        },
+        {
+          "Effect": "Allow",
+          "Action": ["s3:GetObject"],
+          "Resource": "arn:aws:s3:::my-bucket/*"
+        }
+      ]
+    }
+  tag_ids:
+  - reference: system
+    name: System
+    color: 1
+  - reference: odoo
+    name: Odoo
+    color: 5
+  path: false
+  code: |
+    docker run -d --rm --user=root \
+      -e AWS_ACCESS_KEY_ID=#!cxtower.secret.aws_key_id!# \
+      -e AWS_SECRET_ACCESS_KEY=#!cxtower.secret.aws_access_key!# \
+      -e AWS_REGION={{ aws_region }} \
+      -v {{ odoo_data }}:/var/lib/odoo \
+    {% if tower_docker_network %}
+      -e HOST={{ shared_postgres_name }} --network={{ tower_docker_network }} \
+    {% else %}
+      --link {{ shared_postgres_name }}:db \
+    {% endif %}
+      --name {{ odoo_container_name }}_restore_{{ odoo_db_name_restore }}_{{ tower.tools.now_underscore }} -t {{ odoo_image_name }} \
+    sh -c "\
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y awscli && \
+    grep -q '^db_host' /etc/odoo.conf && sed -i 's/^db_host.*/db_host = {{ shared_postgres_name }}/' /etc/odoo.conf || echo 'db_host = {{ shared_postgres_name }}' >> /etc/odoo.conf; \
+    grep -q '^db_user' /etc/odoo.conf && sed -i 's/^db_user.*/db_user = odoo/' /etc/odoo.conf || echo 'db_user = odoo' >> /etc/odoo.conf; \
+    grep -q '^db_password' /etc/odoo.conf && sed -i 's/^db_password.*/db_password = #!cxtower.secret.postgres_password!#/' /etc/odoo.conf || echo 'db_password = #!cxtower.secret.postgres_password!#' >> /etc/odoo.conf; \
+    aws s3 cp {{ odoo_backup_location }}/{{ backup_file_name }} {{ odoo_data }}/{{ backup_file_name }} && \
+    click-odoo-restoredb {% if odoo_neutralize_restored_db and odoo_neutralize_restored_db =='yes' %}--neutralize{% endif %} {{ odoo_db_name_restore }} {{ odoo_data }}/{{ backup_file_name }}; \
+    rm -f {{ odoo_data }}/{{ backup_file_name }} \
+    "
+  server_status: false
+  variable_ids:
+  - access_level: manager
+    reference: aws_region
+    name: AWS Region
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: false
+  - access_level: manager
+    reference: backup_file_name
+    name: Backup File Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Name of the backup file
+  - access_level: manager
+    reference: odoo_backup_location
+    name: Odoo Backup Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Location where Odoo backups are stored
+  - access_level: manager
+    reference: odoo_container_name
+    name: Odoo Container Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: Name of the Odoo Docker container
+  - access_level: manager
+    reference: odoo_db_name_restore
+    name: Odoo DB Name (Restore Target)
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Nabe of db used to restore data
+  - access_level: manager
+    reference: odoo_data
+    name: Odoo Filestore Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo data files are stored
+  - access_level: manager
+    reference: odoo_image_name
+    name: Odoo Image Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Name of the final Odoo image
+  - access_level: manager
+    reference: odoo_neutralize_restored_db
+    name: Odoo Neutralize Restored DB
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: odoo_neutralize_restored_db_variable_option_1
+      sequence: 10
+      name: 'Yes'
+      value_char: 'yes'
+    - access_level: manager
+      reference: odoo_neutralize_restored_db_variable_option_2
+      sequence: 11
+      name: 'No'
+      value_char: 'no'
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Neutralize db after it is restored. Works with Odoo 16.0 and newer.
+  - access_level: manager
+    reference: shared_postgres_name
+    name: Shared Postgres Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Shared Postgres container name.
+      This container is typically used by all instances running on the server.
+  - access_level: manager
+    reference: tower_docker_network
+    name: Tower Docker Network
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9](?:[a-z0-9_.-]*[a-z0-9])?|(?:\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\}))+$
+    validation_message: false
+    note: |-
+      Name on a Docker network used by Tower.
+      If left blank no Docker network will be used. In such case containers can be exposed directly base on their configuration.
+  secret_ids:
+  - reference: aws_access_key
+    name: AWS Access Key
+    key_type: s
+    note: false
+  - reference: aws_key_id
+    name: AWS Key Id
+    key_type: s
+    note: false
+  - reference: postgres_password
+    name: Postgres Password
+    key_type: s
+    note: Password used to connect to Postgres server
+  no_split_for_sudo: true
+  if_file_exists: skip
+  disconnect_file: false

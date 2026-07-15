@@ -1,0 +1,219 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Backup Odoo to S3
+  summary: Backup Odoo database to Amazon S3
+  description: |
+    Creates Odoo backup and pushes it to AWS S3 bucket.
+    You will need to provide access rights to your bucket. Below is a policy example:
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "s3:PutObject",
+                "Resource": "arn:aws:s3:::your-bucket-name/*"
+            }
+        ]
+    }
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com
+  license: AGPL-3
+records:
+- cetmix_tower_model: command
+  access_level: manager
+  reference: backup_odoo_to_s3
+  name: Backup odoo to S3
+  action: ssh_command
+  allow_parallel_run: false
+  note: |
+    Creates Odoo backup and pushes it to AWS S3 bucket.
+    You will need to provide access rights to your bucket. Below is a policy example:
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "s3:PutObject",
+                "Resource": "arn:aws:s3:::your-bucket-name/*"
+            }
+        ]
+    }
+  tag_ids:
+  - reference: system
+    name: System
+    color: 1
+  - reference: odoo
+    name: Odoo
+    color: 5
+  path: false
+  code: |
+    docker run --rm --user=root \
+      -e AWS_ACCESS_KEY_ID=#!cxtower.secret.aws_key_id!# \
+      -e AWS_SECRET_ACCESS_KEY=#!cxtower.secret.aws_access_key!# \
+      -e AWS_REGION={{ aws_region }} \
+      -v {{ odoo_data }}:/var/lib/odoo \
+    {% if tower_docker_network %}
+      -e HOST={{ shared_postgres_name }} --network={{ tower_docker_network }} \
+    {% else %}
+      --link {{ shared_postgres_name }}:db \
+    {% endif %}
+      --name {{ odoo_container_name }}_backup_{{ odoo_db_to_backup_name or odoo_db_name }}_{{ tower.tools.now_underscore }} -t {{ odoo_image_name }} \
+    sh -c "\
+    DEBIAN_FRONTEND=noninteractive apt-get install -y awscli && \
+    grep -q '^db_host' /etc/odoo.conf && sed -i 's/^db_host.*/db_host = {{ shared_postgres_name }}/' /etc/odoo.conf || echo 'db_host = {{ shared_postgres_name }}' >> /etc/odoo.conf; \
+    grep -q '^db_user' /etc/odoo.conf && sed -i 's/^db_user.*/db_user = odoo/' /etc/odoo.conf || echo 'db_user = odoo' >> /etc/odoo.conf; \
+    grep -q '^db_password' /etc/odoo.conf && sed -i 's/^db_password.*/db_password = #!cxtower.secret.postgres_password!#/' /etc/odoo.conf || echo 'db_password = #!cxtower.secret.postgres_password!#' >> /etc/odoo.conf; \
+    click-odoo-backupdb {{ odoo_db_to_backup_name or odoo_db_name }} /tmp/{{ odoo_db_to_backup_name or odoo_db_name }}_{{ tower.tools.now_underscore }}.zip && \
+    aws s3 cp /tmp/{{ odoo_db_to_backup_name or odoo_db_name }}_{{ tower.tools.now_underscore }}.zip s3://{{ aws_s3_bucket_name }}/{{ tower.server.reference }}/{{ instance_name }}/ --quiet \
+    {% if backup_type %}&& aws s3api put-object-tagging --bucket {{ aws_s3_bucket_name }} --key {{ tower.server.reference }}/{{ instance_name }}/{{ odoo_db_to_backup_name or odoo_db_name }}_{{ tower.tools.now_underscore }}.zip --tagging 'TagSet=[{Key=BackupType,Value={{ backup_type }}}]'{% endif %}"
+  server_status: false
+  variable_ids:
+  - access_level: manager
+    reference: aws_region
+    name: AWS Region
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: false
+  - access_level: manager
+    reference: aws_s3_bucket_name
+    name: AWS S3 bucket name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9](?:[a-z0-9\-\.]*[a-z0-9])?|(\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\}))+$
+    validation_message: false
+    note: false
+  - access_level: manager
+    reference: backup_type
+    name: Backup Type
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: backup_type_variable_option_1_2
+      sequence: 10
+      name: Manual
+      value_char: manual
+    - access_level: manager
+      reference: backup_type_variable_option_2
+      sequence: 11
+      name: Daily
+      value_char: daily
+    - access_level: manager
+      reference: backup_type_variable_option_1
+      sequence: 12
+      name: Hourly
+      value_char: hourly
+    - access_level: manager
+      reference: backup_type_variable_option_4
+      sequence: 13
+      name: Monthly
+      value_char: monthly
+    - access_level: manager
+      reference: backup_type_variable_option_3
+      sequence: 14
+      name: Weekly
+      value_char: weekly
+    - access_level: manager
+      reference: backup_type_variable_option_5
+      sequence: 15
+      name: Custom
+      value_char: custom
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Backup types. Can be used for flow design, tagging etc
+  - access_level: manager
+    reference: instance_name
+    name: Instance Name
+    variable_type: s
+    applied_expression: result = value.lower().strip().replace(" ","")
+    validation_pattern: ^(?!\s)(?:(?!\/)[A-Za-z0-9._-]|{{\s*[A-Za-z_][A-Za-z0-9_]*\s*}})+(?!\s)$
+    validation_message: Must comply with the UNIX directory naming standards!
+    note: |-
+      This is a technical name of the instance which is used for creating the directory structure.
+      It can be also used for the URL creation, so you should avoid using non URL friendly symbols.
+  - access_level: manager
+    reference: odoo_container_name
+    name: Odoo Container Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: Name of the Odoo Docker container
+  - access_level: manager
+    reference: odoo_db_name
+    name: Odoo DB name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Odoo database name. \nIf provided, Odoo will run in the single-db mode,\
+      \ with all requests being redirected to this database."
+  - access_level: manager
+    reference: odoo_db_to_backup_name
+    name: Odoo DB to backup name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Name of the Odoo database to be backed.
+      Used with click-odoo-backupdb
+  - access_level: manager
+    reference: odoo_data
+    name: Odoo Filestore Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo data files are stored
+  - access_level: manager
+    reference: odoo_image_name
+    name: Odoo Image Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Name of the final Odoo image
+  - access_level: manager
+    reference: shared_postgres_name
+    name: Shared Postgres Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Shared Postgres container name.
+      This container is typically used by all instances running on the server.
+  - access_level: manager
+    reference: tower_docker_network
+    name: Tower Docker Network
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9](?:[a-z0-9_.-]*[a-z0-9])?|(?:\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\}))+$
+    validation_message: false
+    note: |-
+      Name on a Docker network used by Tower.
+      If left blank no Docker network will be used. In such case containers can be exposed directly base on their configuration.
+  secret_ids:
+  - reference: aws_access_key
+    name: AWS Access Key
+    key_type: s
+    note: false
+  - reference: aws_key_id
+    name: AWS Key Id
+    key_type: s
+    note: false
+  - reference: postgres_password
+    name: Postgres Password
+    key_type: s
+    note: Password used to connect to Postgres server
+  no_split_for_sudo: true
+  if_file_exists: skip
+  disconnect_file: false

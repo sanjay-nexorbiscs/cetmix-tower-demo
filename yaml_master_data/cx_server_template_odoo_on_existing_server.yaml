@@ -1,0 +1,4572 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Odoo on existing server
+  summary: Deploy Odoo on existing server
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.10
+  website: https://cetmix.com/contactus
+  license: agpl-3
+records:
+- cetmix_tower_model: server_template
+  reference: odoo_on_existing_server
+  name: Odoo on existing server
+  color: 4
+  tag_ids:
+  - reference: docker
+    name: Docker
+    color: 4
+  - reference: odoo
+    name: Odoo
+    color: 5
+  note: |-
+    Install Odoo, Postgres and Nginx on existing server.
+    Nginx with Certbot will be installed only if "Instance URL" is provided.
+
+    If you want Odoo port to be exposed, please leave the "Tower Docker Network" parameter empty, or remove it.
+
+    Important! URL should be provided without a protocol prefix. Eg "my.example.com" NOT "https://my.example.com"
+  ssh_port: 22
+  ssh_username: root
+  ssh_key_id:
+    reference: deployment_key
+    name: Deployment Key
+    key_type: k
+    note: false
+  ssh_auth_mode: k
+  use_sudo: false
+  variable_value_ids:
+  - access_level: manager
+    reference: instance_name_copy
+    sequence: 10
+    variable_id:
+      access_level: manager
+      reference: instance_name
+      name: Instance Name
+      variable_type: s
+      applied_expression: result = value.lower().strip().replace(" ","")
+      validation_pattern: ^(?!\s)(?:(?!\/)[A-Za-z0-9._-]|{{\s*[A-Za-z_][A-Za-z0-9_]*\s*}})+(?!\s)$
+      validation_message: Must comply with the UNIX directory naming standards!
+      note: |-
+        This is a technical name of the instance which is used for creating the directory structure.
+        It can be also used for the URL creation, so you should avoid using non URL friendly symbols.
+    value_char: false
+    required: true
+  - access_level: manager
+    reference: instance_url_variable_value_1_6
+    sequence: 11
+    variable_id:
+      access_level: manager
+      reference: instance_url
+      name: Instance URL
+      variable_type: s
+      applied_expression: result = value.lower().strip().replace('_', '-').replace("
+        ","").replace("https://","").replace("http://","")
+      validation_pattern: ^(?!\/\/)(?:(?:[A-Za-z0-9._~-]+|{{\s*[A-Za-z_][A-Za-z0-9_]*\s*}})(?:\/)?)+$
+      validation_message: Must be a valid URL without the protocol. eg "my.example.com".
+        Do not add "https://" or "http://" prefix!
+      note: |-
+        Web URL of the instance, excluding the protocol. eg "my.example.com".
+        Do not add "https://" or "http://" prefix!
+    value_char: false
+    required: false
+  - access_level: manager
+    reference: odoo_version_copy
+    sequence: 12
+    variable_id:
+      access_level: manager
+      reference: odoo_version
+      name: Odoo Version
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: odoo_version_variable_option_1_2
+        sequence: 10
+        name: '19.0'
+        value_char: '19.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_8
+        sequence: 11
+        name: '18.0'
+        value_char: '18.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_7
+        sequence: 12
+        name: '17.0'
+        value_char: '17.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_6
+        sequence: 13
+        name: '16.0'
+        value_char: '16.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_5
+        sequence: 14
+        name: '15.0'
+        value_char: '15.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_4
+        sequence: 15
+        name: '14.0'
+        value_char: '14.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_3
+        sequence: 16
+        name: '13.0'
+        value_char: '13.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_2
+        sequence: 17
+        name: '12.0'
+        value_char: '12.0'
+      - access_level: manager
+        reference: odoo_version_variable_option_1
+        sequence: 18
+        name: '11.0'
+        value_char: '11.0'
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: Odoo version
+    value_char: '18.0'
+    required: true
+  - access_level: manager
+    reference: odoo_edition_variable_value_1_3
+    sequence: 13
+    variable_id:
+      access_level: manager
+      reference: odoo_edition
+      name: Odoo Edition
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: odoo_edition_variable_option_1
+        sequence: 10
+        name: Community
+        value_char: ce
+      - access_level: manager
+        reference: odoo_edition_variable_option_2
+        sequence: 10
+        name: Enterprise
+        value_char: ee
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: Odoo edition. Access to the odoo/enterprise repository is required to
+        install the Enterprise one.
+    value_char: ce
+    required: false
+  - access_level: manager
+    reference: odoo_log_level_variable_value_1_4
+    sequence: 14
+    variable_id:
+      access_level: manager
+      reference: odoo_log_level
+      name: Odoo Log Level
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: odoo_log_level_variable_option_5
+        sequence: 10
+        name: Info
+        value_char: info
+      - access_level: manager
+        reference: odoo_log_level_variable_option_3
+        sequence: 11
+        name: Warning
+        value_char: warn
+      - access_level: manager
+        reference: odoo_log_level_variable_option_2
+        sequence: 12
+        name: Error
+        value_char: error
+      - access_level: manager
+        reference: odoo_log_level_variable_option_1
+        sequence: 13
+        name: Critical
+        value_char: critical
+      - access_level: manager
+        reference: odoo_log_level_variable_option_4
+        sequence: 14
+        name: Debug
+        value_char: debug
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: "Shortcut to more easily set predefined levels on specific loggers. \u201C\
+        real\u201D levels (critical, error, warn, debug) are set on the odoo and werkzeug\
+        \ loggers (except for debug which is only set on odoo)."
+    value_char: warn
+    required: false
+  - access_level: manager
+    reference: odoo_proxy_mode_variable_value_1_5
+    sequence: 15
+    variable_id:
+      access_level: manager
+      reference: odoo_proxy_mode
+      name: Odoo Proxy Mode
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: odoo_proxy_mode_variable_option_1
+        sequence: 10
+        name: 'Yes'
+        value_char: 'yes'
+      - access_level: manager
+        reference: odoo_proxy_mode_variable_option_1_2
+        sequence: 11
+        name: 'No'
+        value_char: 'no'
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: Enable when running Odoo behind a reverse proxy such as Nginx.
+    value_char: 'yes'
+    required: false
+  - access_level: manager
+    reference: odoo_db_manager_password_variable_value_1_5
+    sequence: 16
+    variable_id:
+      access_level: manager
+      reference: odoo_db_manager_password
+      name: Odoo DB Manager Password
+      variable_type: s
+      applied_expression: result = value.strip().replace(" ","")
+      validation_pattern: ^\S+$
+      validation_message: false
+      note: |-
+        Default password for odoo db manager.
+        DO NOT USE DEFAULT PASSWORD UNLESS FOR TESTING PURPOSES ONLY.
+        It's also highly recommended to disable access to the database manager using the odoo_no_db_list variable.
+        Opt for using a secret instead of a variable if you want this value to be inaccessible from UI.
+    value_char: false
+    required: true
+  - access_level: manager
+    reference: odoo_no_db_list_variable_value_1_12
+    sequence: 17
+    variable_id:
+      access_level: manager
+      reference: odoo_no_db_list
+      name: Odoo Disable DB Manager
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: odoo_no_db_list_variable_option_1
+        sequence: 10
+        name: 'Yes'
+        value_char: 'yes'
+      - access_level: manager
+        reference: odoo_no_db_list_variable_option_1_2
+        sequence: 11
+        name: 'No'
+        value_char: 'no'
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: 'Disable Odoo database manager. You can still access databases using other
+        tools. '
+    value_char: 'no'
+    required: false
+  - access_level: manager
+    reference: odoo_db_name_variable_value_1_4
+    sequence: 18
+    variable_id:
+      access_level: manager
+      reference: odoo_db_name
+      name: Odoo DB name
+      variable_type: s
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: "Odoo database name. \nIf provided, Odoo will run in the single-db mode,\
+        \ with all requests being redirected to this database."
+    value_char: false
+    required: false
+  - access_level: manager
+    reference: odoo_load_demo_data_variable_value_1_3
+    sequence: 19
+    variable_id:
+      access_level: manager
+      reference: odoo_load_demo_data
+      name: Odoo load demo data
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: odoo_without_demo_variable_option_1
+        sequence: 10
+        name: 'Yes'
+        value_char: 'yes'
+      - access_level: manager
+        reference: odoo_without_demo_variable_option_2
+        sequence: 11
+        name: 'No'
+        value_char: 'no'
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: Load demo data for modules
+    value_char: 'no'
+    required: false
+  - access_level: manager
+    reference: odoo_workers_variable_value_1_5
+    sequence: 20
+    variable_id:
+      access_level: manager
+      reference: odoo_workers
+      name: Odoo Workers
+      variable_type: s
+      applied_expression: false
+      validation_pattern: ^\d+$
+      validation_message: false
+      note: if count is not 0 (the default), enables multiprocessing and sets up the
+        specified number of HTTP workers (sub-processes processing HTTP and RPC requests).
+    value_char: false
+    required: false
+  - access_level: manager
+    reference: odoo_max_cron_threads_variable_value_1_5
+    sequence: 21
+    variable_id:
+      access_level: manager
+      reference: odoo_max_cron_threads
+      name: Odoo Max Cron Threads
+      variable_type: s
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: |-
+        number of workers dedicated to cron jobs. Defaults to 2. The workers are threads in multi-threading mode and processes in multi-processing mode.
+
+        For multi-processing mode, this is in addition to the HTTP worker processes.
+    value_char: false
+    required: false
+  - access_level: manager
+    reference: odoo_limit_time_cpu_variable_value_1_6
+    sequence: 22
+    variable_id:
+      access_level: manager
+      reference: odoo_limit_time_cpu
+      name: Odoo Limit Time CPU
+      variable_type: s
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: |-
+        Prevents the worker from using more than <limit> CPU seconds for each request. If the limit is exceeded, the worker is killed.
+
+        Odoo default value is 60.
+    value_char: '180'
+    required: false
+  - access_level: manager
+    reference: odoo_limit_time_real_variable_value_1_6
+    sequence: 23
+    variable_id:
+      access_level: manager
+      reference: odoo_limit_time_real
+      name: Odoo Limit Time Real
+      variable_type: s
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: "Prevents the worker from taking longer than <limit> seconds to process\
+        \ a request. If the limit is exceeded, the worker is killed.\n\nDiffers from\
+        \ odoo_limit_time_cpu in that this is a \u201Cwall time\u201D limit including\
+        \ e.g. SQL queries.\n\nDefault Odoo value is 120."
+    value_char: '360'
+    required: false
+  - access_level: manager
+    reference: nginx_prevent_website_index_variable_value_1_2
+    sequence: 24
+    variable_id:
+      access_level: manager
+      reference: nginx_prevent_website_index
+      name: Nginx Prevent Website Index
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: nginx_prevent_website_index_variable_option_1
+        sequence: 10
+        name: 'Yes'
+        value_char: 'yes'
+      - access_level: manager
+        reference: nginx_prevent_website_index_variable_option_1_2
+        sequence: 11
+        name: 'No'
+        value_char: 'no'
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: |-
+        Tell search engines not to index the website.
+        Enable for installations that are not intended to appear in search.
+    value_char: 'yes'
+    required: false
+  - access_level: manager
+    reference: nginx_block_odoo_debug_mode_variable_value_1
+    sequence: 25
+    variable_id:
+      access_level: manager
+      reference: nginx_block_odoo_debug_mode
+      name: Nginx Block Odoo Debug Mode
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: nginx_block_odoo_debug_mode_variable_option_2
+        sequence: 10
+        name: 'No'
+        value_char: 'no'
+      - access_level: manager
+        reference: nginx_block_odoo_debug_mode_variable_option_1
+        sequence: 10
+        name: 'Yes'
+        value_char: 'yes'
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: Block urls containing '?debug' thus preventing usage of the Odoo debug
+        mode
+    value_char: 'no'
+    required: false
+  - access_level: manager
+    reference: postgres_version_copy
+    sequence: 26
+    variable_id:
+      access_level: manager
+      reference: postgres_version
+      name: Postgres Version
+      variable_type: o
+      option_ids:
+      - access_level: manager
+        reference: postgres_version_variable_option_1_3
+        sequence: 10
+        name: Latest
+        value_char: latest
+      - access_level: manager
+        reference: postgres_version_variable_option_2_2
+        sequence: 11
+        name: '18'
+        value_char: '18'
+      - access_level: manager
+        reference: postgres_version_variable_option_1_2
+        sequence: 12
+        name: '17'
+        value_char: '17'
+      - access_level: manager
+        reference: postgres_version_variable_option_5
+        sequence: 13
+        name: '16'
+        value_char: '16'
+      - access_level: manager
+        reference: postgres_version_variable_option_4
+        sequence: 14
+        name: '15'
+        value_char: '15'
+      - access_level: manager
+        reference: postgres_version_variable_option_3
+        sequence: 15
+        name: '14'
+        value_char: '14'
+      - access_level: manager
+        reference: postgres_version_variable_option_2
+        sequence: 16
+        name: '13'
+        value_char: '13'
+      - access_level: manager
+        reference: postgres_version_variable_option_1
+        sequence: 17
+        name: '9.6'
+        value_char: '9.6'
+      applied_expression: false
+      validation_pattern: false
+      validation_message: false
+      note: Postgres version. Pick the latest one supported by your app.
+    value_char: '16'
+    required: false
+  - access_level: manager
+    reference: tower_docker_network_copy
+    sequence: 27
+    variable_id:
+      access_level: manager
+      reference: tower_docker_network
+      name: Tower Docker Network
+      variable_type: s
+      applied_expression: false
+      validation_pattern: ^(?:[a-z0-9](?:[a-z0-9_.-]*[a-z0-9])?|(?:\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\}))+$
+      validation_message: false
+      note: |-
+        Name on a Docker network used by Tower.
+        If left blank no Docker network will be used. In such case containers can be exposed directly base on their configuration.
+    value_char: tower
+    required: false
+  server_log_ids:
+  - reference: odoo_log_11
+    name: Odoo log
+    log_type: command
+    command_id:
+      access_level: manager
+      reference: show_odoo_logs
+      name: Show Odoo container logs
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      path: false
+      code: docker logs --since={{ docker_logs_time or '5m' }} --tail={{ docker_logs_lines
+        or 300 }} {{ odoo_container_name}}
+      server_status: false
+      variable_ids:
+      - access_level: manager
+        reference: docker_logs_lines
+        name: Docker Logs Lines
+        variable_type: s
+        applied_expression: false
+        validation_pattern: false
+        validation_message: false
+        note: |-
+          Will show only the specific number of last log lines.
+          docker show logs --tail 50
+      - access_level: manager
+        reference: docker_logs_time
+        name: Docker Logs Time
+        variable_type: s
+        applied_expression: false
+        validation_pattern: false
+        validation_message: false
+        note: |-
+          Will show logs for the last time frame defined by this parameter.
+          docker show logs --from==
+      - access_level: manager
+        reference: odoo_container_name
+        name: Odoo Container Name
+        variable_type: s
+        applied_expression: false
+        validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+        validation_message: false
+        note: Name of the Odoo Docker container
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    use_sudo: false
+  - reference: list_docker_containers_8
+    name: List docker containers
+    log_type: command
+    command_id:
+      access_level: manager
+      reference: list_docker_containers
+      name: List docker containers
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      tag_ids:
+      - reference: docker
+      path: false
+      code: docker ps --all
+      server_status: false
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    use_sudo: false
+  - reference: nginx_log_6
+    name: Nginx log
+    log_type: command
+    command_id:
+      access_level: manager
+      reference: show_nginx_container_logs
+      name: Show Nginx container logs
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      tag_ids:
+      - reference: docker
+      - reference: nginx
+        name: Nginx
+        color: 8
+      path: false
+      code: docker logs --since={{ docker_logs_time or '5m' }} --tail={{ docker_logs_lines
+        or 300 }} {{ nginx_shared_container_name }}
+      server_status: false
+      variable_ids:
+      - reference: docker_logs_lines
+      - reference: docker_logs_time
+      - access_level: manager
+        reference: nginx_shared_container_name
+        name: Shared Nginx container name
+        variable_type: s
+        applied_expression: false
+        validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+        validation_message: false
+        note: |-
+          Name of the shared nginx with certbot container.
+          This container is used as a reverse proxy for Odoo.
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    use_sudo: false
+  shortcut_ids:
+  - access_level: user
+    reference: restart_odoo
+    name: Restart Odoo fast with old settings
+    sequence: 0
+    action: command
+    command_id:
+      access_level: manager
+      reference: restart_odoo_container
+      name: Restart Odoo Container
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      tag_ids:
+      - reference: docker
+      - reference: odoo
+      path: false
+      code: docker restart {{ odoo_container_name }}
+      server_status: running
+      variable_ids:
+      - reference: odoo_container_name
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    use_sudo: false
+    note: Use when you need to restart Odoo with the same configuration parameters
+      as before.
+  - access_level: user
+    reference: restart_odoo_recreate_container
+    name: Restart Odoo and apply the new settings
+    sequence: 1
+    action: plan
+    use_sudo: false
+    plan_id:
+      access_level: manager
+      reference: remove_and_restart_odoo_container
+      name: Remove and restart Odoo container
+      allow_parallel_run: false
+      color: 0
+      tag_ids:
+      - reference: docker
+      - reference: odoo
+      note: false
+      on_error_action: e
+      custom_exit_code: 0
+      line_ids:
+      - reference: stop_odoo_container_2
+        sequence: 10
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          access_level: manager
+          reference: stop_odoo_container
+          name: Stop Odoo container
+          action: ssh_command
+          allow_parallel_run: false
+          note: false
+          tag_ids:
+          - reference: odoo
+          path: false
+          code: docker stop {{ odoo_container_name}}
+          server_status: stopped
+          variable_ids:
+          - reference: odoo_container_name
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        action_ids:
+        - reference: if_exit_code__0_then_run_next_command_4
+          sequence: 10
+          condition: '!='
+          value_char: '0'
+          action: n
+          custom_exit_code: 0
+        is_make_copy: false
+      - reference: remove_odoo_container_2
+        sequence: 11
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          access_level: manager
+          reference: remove_odoo_container
+          name: Remove Odoo container
+          action: ssh_command
+          allow_parallel_run: false
+          note: false
+          tag_ids:
+          - reference: odoo
+          path: false
+          code: docker rm {{ odoo_container_name}}
+          server_status: false
+          variable_ids:
+          - reference: odoo_container_name
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        action_ids:
+        - reference: if_exit_code__0_then_run_next_command_5
+          sequence: 10
+          condition: '!='
+          value_char: '0'
+          action: n
+          custom_exit_code: 0
+        is_make_copy: false
+      - reference: run_odoo_container_with_shared_pg_2
+        sequence: 12
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          access_level: manager
+          reference: run_odoo_container_with_shared_pg
+          name: Run Odoo container with shared PG
+          action: ssh_command
+          allow_parallel_run: false
+          note: false
+          tag_ids:
+          - reference: docker
+          - reference: odoo
+          path: false
+          code: |-
+            docker run -d \
+            -e ADMIN_PASSWORD="{{ odoo_db_manager_password }}" \
+            {% if tower_docker_network %}
+            -e HOST=db-shared \
+            {% endif %}
+            {% if  not tower_docker_network %}
+              -p {% if odoo_port %}{{ odoo_port }}{% else %}8069{% endif %}:8069 \
+            {% endif %}
+            {% if  odoo_queue_job_channels %}
+              -e ODOO_QUEUE_JOB_CHANNELS={{ odoo_queue_job_channels }} \
+            {% endif %}
+            {% if  odoo_longpolling_port and odoo_longpolling_port != '0' and odoo_workers and odoo_workers != '0' and not tower_docker_network  %}
+              -p {{ odoo_longpolling_port }}:8072 \
+            {% endif %}
+              -v {{ odoo_data }}:/var/lib/odoo \
+            {% if  tower_docker_network %}
+              --network={{ tower_docker_network }} \
+            {% endif %}
+              --restart {{ odoo_restart_policy }} \
+              --name {{ odoo_container_name}} \
+            {% if not tower_docker_network %}
+                --link {{ shared_postgres_name }}:db \
+            {% endif %}
+              -t {{ odoo_image_name }} \
+            -- --db_password=#!cxtower.secret.postgres_password!# \
+            {% if not odoo_load_demo_data or odoo_load_demo_data =='no' %}--without-demo=all{% elif odoo_version in ["19.0"] %}--with-demo{% endif %} \
+            {% if  odoo_db_name %}
+              --database={{ odoo_db_name }} \
+            {% endif %}
+            {% if odoo_db_filter %}
+              --db-filter={{ odoo_db_filter }} \
+            {% endif %}
+            {% if odoo_limit_time_cpu %}
+              --limit-time-cpu={{ odoo_limit_time_cpu }} \
+            {% endif %}
+            {% if odoo_limit_time_real %}
+              --limit-time-real={{ odoo_limit_time_real }} \
+            {% endif %}
+            {% if odoo_limit_memory_soft %}
+              --limit-memory-soft={{ odoo_limit_memory_soft }} \
+            {% endif %}
+            {% if odoo_limit_memory_hard %}
+              --limit-memory-hard={{ odoo_limit_memory_hard }} \
+            {% endif %}
+            {% if  odoo_log_level %}
+               --log-level={{ odoo_log_level }} \
+            {% endif %}
+            {% if  odoo_log_handler %}
+               --log-handler={{ odoo_log_handler }} \
+            {% endif %}
+            {% if  odoo_log_level %}
+               --log-level={{ odoo_log_level }} \
+            {% endif %}
+            {% if odoo_log_web %}
+               --log-web \
+            {% endif %}
+            {% if odoo_log_sql %}
+               --log-sql \
+            {% endif %}
+            {% if  odoo_workers %}
+              --workers={{ odoo_workers }} \
+            {% endif %}
+            {% if  odoo_load %}
+              --load={{ odoo_load }} \
+            {% endif %}
+            {% if odoo_proxy_mode and odoo_proxy_mode != "no" %}
+              --proxy-mode \
+            {% endif %}
+            {% if odoo_no_db_list and odoo_no_db_list != "no" %}
+              --no-database-list \
+            {% endif %}
+            {% if (odoo_gevent_port and odoo_gevent_port != '0') or (odoo_longpolling_port and odoo_longpolling_port != '0') and odoo_workers and odoo_workers != '0'  %}
+               {% if odoo_version in ["8.0", "9.0", "10.0", "11.0", "12.0", "13.0", "14.0", "15.0"] %}\
+            --longpolling-port={{ odoo_longpolling_port or odoo_gevent_port }} \
+               {% else %}
+            --gevent-port={{ odoo_gevent_port or odoo_longpolling_port }} \
+               {% endif %}
+               {% if odoo_max_cron_threads and odoo_max_cron_threads != '0' %}
+            --max-cron-threads={{ odoo_max_cron_threads }} \
+                {% endif %}
+            {% endif %}
+          server_status: running
+          variable_ids:
+          - access_level: manager
+            reference: odoo_load
+            name: Load Odoo modules server-wide
+            variable_type: s
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: "Loads listed modules server wide.\nTypically used for modules such\
+              \ as queue_job. \nRemember to add base and web too, eg\nbase,web,queue_job"
+          - reference: odoo_container_name
+          - access_level: manager
+            reference: odoo_restart_policy
+            name: Odoo Container Restart Policy
+            variable_type: o
+            option_ids:
+            - access_level: manager
+              reference: odoo_restart_policy_variable_option_1
+              sequence: 10
+              name: Do not restart
+              value_char: 'no'
+            - access_level: manager
+              reference: odoo_restart_policy_variable_option_2
+              sequence: 11
+              name: Restart if it was running
+              value_char: unless-stopped
+            - access_level: manager
+              reference: odoo_restart_policy_variable_option_3
+              sequence: 12
+              name: Always restart
+              value_char: always
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: |-
+              Restart policy of the Odoo Docker container.
+              Tells Docker what to do with the container after the host system was restarted.
+          - reference: odoo_db_manager_password
+          - reference: odoo_db_name
+          - access_level: manager
+            reference: odoo_db_filter
+            name: Odoo Db Filter
+            variable_type: s
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: |-
+              hides databases that do not match <filter>. The filter is a regular expression, with the additions that:
+              - %h is replaced by the whole hostname the request is made on.
+              - %d is replaced by the subdomain the request is made on, with the exception of www (so domain odoo.com and www.odoo.com both match the database odoo).
+              These operations are case sensitive. Add option (?i) to match all databases (so domain odoo.com using (?i)%d matches the database Odoo).
+          - reference: odoo_no_db_list
+          - access_level: manager
+            reference: odoo_data
+            name: Odoo Filestore Location
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+            validation_message: false
+            note: Where Odoo data files are stored
+          - access_level: manager
+            reference: odoo_gevent_port
+            name: Odoo Gevent Port
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^\d+$
+            validation_message: false
+            note: Used in Odoo from 16.0 onwards to deliver bus messages
+          - access_level: manager
+            reference: odoo_image_name
+            name: Odoo Image Name
+            variable_type: s
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: Name of the final Odoo image
+          - access_level: manager
+            reference: odoo_limit_memory_hard
+            name: Odoo Limit Memory Hard
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^\d+$
+            validation_message: false
+            note: |-
+              Hard limit on virtual memory in bytes, any worker exceeding the limit will be immediately killed without waiting for the end of the current request processing.
+
+              Odoo default value is 2560MiB (2560*1024*1024B).
+          - access_level: manager
+            reference: odoo_limit_memory_soft
+            name: Odoo Limit Memory Soft
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^\d+$
+            validation_message: false
+            note: |-
+              Maximum allowed virtual memory per worker in bytes. If the limit is exceeded, the worker is killed and recycled at the end of the current request.
+
+              Odoo default values is 2048MiB (2048*1024*1024B).
+          - reference: odoo_limit_time_cpu
+          - reference: odoo_limit_time_real
+          - access_level: manager
+            reference: odoo_log_handler
+            name: Odoo Log Handler
+            variable_type: s
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: LOGGER:LEVEL, enables LOGGER at the provided LEVEL e.g. odoo.models:DEBUG
+              will enable all logging messages at or above DEBUG level in the models.
+          - reference: odoo_log_level
+          - access_level: manager
+            reference: odoo_log_sql
+            name: Odoo Log SQL
+            variable_type: o
+            option_ids:
+            - access_level: manager
+              reference: odoo_log_sql_variable_option_1
+              sequence: 10
+              name: Enabled
+              value_char: 'on'
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: Enables DEBUG logging of SQL querying, equivalent to --log-handler=odoo.sql_db:DEBUG
+          - access_level: manager
+            reference: odoo_log_web
+            name: Odoo Log Web
+            variable_type: o
+            option_ids:
+            - access_level: manager
+              reference: odoo_log_web_variable_option_1
+              sequence: 10
+              name: Enabled
+              value_char: 'on'
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: |-
+              Enables DEBUG logging of HTTP requests and responses, equivalent to
+              odoo_log_handler=odoo.http:DEBUG
+          - access_level: manager
+            reference: odoo_longpolling_port
+            name: Odoo Longpolling Port
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^\d+$
+            validation_message: false
+            note: Used in Odoo before 16.0 to deliver bus messages
+          - reference: odoo_max_cron_threads
+          - access_level: manager
+            reference: odoo_port
+            name: Odoo Port
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^\d+$
+            validation_message: false
+            note: Odoo port, default is 8069
+          - reference: odoo_proxy_mode
+          - access_level: manager
+            reference: odoo_queue_job_channels
+            name: Odoo Queue Job Channels
+            variable_type: s
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: |-
+              Number of queue_job channels.
+              Check the module dodocumentation for details: https://github.com/OCA/queue/tree/16.0/queue_job
+          - reference: odoo_version
+          - reference: odoo_workers
+          - reference: odoo_load_demo_data
+          - access_level: manager
+            reference: shared_postgres_name
+            name: Shared Postgres Name
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+            validation_message: false
+            note: |-
+              Shared Postgres container name.
+              This container is typically used by all instances running on the server.
+          - reference: tower_docker_network
+          secret_ids:
+          - reference: postgres_password
+            name: Postgres Password
+            key_type: s
+            note: Password used to connect to Postgres server
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        is_make_copy: false
+    note: Use this when you need to restart Odoo with new configuration parameters.
+  - access_level: manager
+    reference: update_modules
+    name: Update Odoo modules
+    sequence: 2
+    action: plan
+    use_sudo: false
+    plan_id:
+      access_level: manager
+      reference: update_modules
+      name: Update modules
+      allow_parallel_run: false
+      color: 0
+      tag_ids:
+      - reference: docker
+      - reference: odoo
+      note: Add comma separated list of modules to update in the "odoo_modules_to_update"
+        variable
+      on_error_action: e
+      custom_exit_code: 0
+      line_ids:
+      - reference: update_modules_in_odoo_container_with_shared_pg
+        sequence: 10
+        condition: false
+        use_sudo: false
+        path: false
+        command_id:
+          access_level: manager
+          reference: update_modules_in_odoo_container_with_shared_pg
+          name: Update modules in Odoo container with shared PG
+          action: ssh_command
+          allow_parallel_run: false
+          note: Runs container with odoo in update mode. Container is removed after
+            execution
+          tag_ids:
+          - reference: odoo
+          - reference: template
+            name: Template
+            color: 10
+          path: false
+          code: |
+            docker run --rm \
+            {% if tower_docker_network %}
+                -e HOST={{ shared_postgres_name }} \
+            {% endif %}
+                -v {{ odoo_data }}:/var/lib/odoo \
+                --name {{ odoo_container_name}}_updater \
+            {% if  tower_docker_network %}
+              --network={{ tower_docker_network }} \
+            {% else %}
+              --link {{ shared_postgres_name }}:db \
+            {% endif %}
+                -t {{ odoo_image_name }} \
+            -- --no-http --stop-after-init --update={{ odoo_modules_to_update }} \
+            {% if  odoo_addons_path %}
+               --addons-path={{ odoo_addons_path }} \
+            {% endif %}
+            {% if  odoo_db_name %}
+               --database={{ odoo_db_name }} \
+            {% endif %}
+            {% if odoo_limit_time_cpu %}
+              --limit-time-cpu={{ odoo_limit_time_cpu }} \
+            {% endif %}
+            {% if odoo_limit_time_real %}
+              --limit-time-real={{ odoo_limit_time_real }} \
+            {% endif %}
+          server_status: false
+          variable_ids:
+          - access_level: manager
+            reference: odoo_addons_path
+            name: Odoo Addons Path
+            variable_type: s
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: |-
+              Path to extra addons outside the container.
+              Used for custom images only.
+          - reference: odoo_container_name
+          - reference: odoo_db_name
+          - reference: odoo_data
+          - reference: odoo_image_name
+          - reference: odoo_limit_time_cpu
+          - reference: odoo_limit_time_real
+          - access_level: manager
+            reference: odoo_modules_to_update
+            name: Odoo Modules to Init/Update
+            variable_type: s
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: Coma separated string with odoo module names to init (install) or
+              update
+          - reference: shared_postgres_name
+          - reference: tower_docker_network
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        is_make_copy: false
+      - reference: restart_odoo_container
+        sequence: 11
+        condition: false
+        use_sudo: false
+        path: false
+        command_id:
+          reference: restart_odoo_container
+        is_make_copy: false
+    note: |-
+      You can specify which modules to update by adding them as a comma separated list in the "Odoo Modules to Init/Update" configuration parameter.
+      Eg "sale,purchase,my_custom_module"
+      All modules will be updated if no modules are defined in the "Odoo Modules to Init/Update" or "Odoo Modules to Init/Update" is not present in the server configuration.
+  - access_level: manager
+    reference: stop_odoo_container
+    name: Stop Odoo container
+    sequence: 3
+    action: command
+    command_id:
+      reference: stop_odoo_container
+    use_sudo: false
+    note: Use this when you need to stop the Odoo container.
+  - access_level: manager
+    reference: start_odoo_container
+    name: Start Odoo container
+    sequence: 4
+    action: command
+    command_id:
+      access_level: manager
+      reference: start_odoo_container
+      name: Start Odoo container
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      tag_ids:
+      - reference: odoo
+      path: false
+      code: docker start {{ odoo_container_name}}
+      server_status: running
+      variable_ids:
+      - reference: odoo_container_name
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    use_sudo: false
+    note: Use this when you need to start the Odoo container.
+  - access_level: user
+    reference: rebuild_odoo_container
+    name: Rebuild Odoo container
+    sequence: 5
+    action: plan
+    use_sudo: false
+    plan_id:
+      access_level: manager
+      reference: build_odoo_container
+      name: Build Odoo container
+      allow_parallel_run: false
+      color: 0
+      tag_ids:
+      - reference: docker
+      - reference: odoo
+      note: |-
+        Build image while container is still running.
+        Restart container only if build is finished with no errors.
+      on_error_action: e
+      custom_exit_code: 0
+      line_ids:
+      - reference: build_odoo_container_plan_line_1_2
+        sequence: 10
+        condition: false
+        use_sudo: false
+        path: false
+        command_id:
+          access_level: manager
+          reference: build_odoo_base_image_if_not_exists
+          name: Build Odoo base image if not exists
+          action: plan
+          allow_parallel_run: false
+          note: |-
+            Build Odoo base image if it doesn't exist.
+            Otherwise exit with the exit code 0.
+          tag_ids:
+          - reference: docker
+          - reference: odoo
+          path: false
+          flight_plan_id:
+            access_level: manager
+            reference: build_odoo_base_image_if_not_exists
+            name: Build Odoo base image if not exists
+            allow_parallel_run: false
+            color: 0
+            tag_ids:
+            - reference: docker
+            - reference: odoo
+            note: Builds a core Odoo image using Cetmix Dockerfile designed for Tower
+              if it doesn't exist yet.
+            on_error_action: e
+            custom_exit_code: 0
+            line_ids:
+            - reference: build_odoo_base_image_copy_plan_line_1
+              sequence: 10
+              condition: false
+              use_sudo: false
+              path: false
+              command_id:
+                access_level: manager
+                reference: check_for_odoo_base_image
+                name: Check for Odoo Base Image
+                action: ssh_command
+                allow_parallel_run: false
+                note: Check if Odoo base image is present in the system.
+                tag_ids:
+                - reference: docker
+                - reference: odoo
+                path: false
+                code: |
+                  docker image inspect tower-odoo-core:{{ odoo_version }}-{{ odoo_edition }} > /dev/null 2>&1
+                server_status: false
+                variable_ids:
+                - reference: odoo_edition
+                - reference: odoo_version
+                no_split_for_sudo: false
+                if_file_exists: skip
+                disconnect_file: false
+              action_ids:
+              - reference: build_odoo_base_image_copy_plan_line_1_plan_line_action_1
+                sequence: 10
+                condition: ==
+                value_char: '0'
+                action: e
+                custom_exit_code: 0
+              - reference: build_odoo_base_image_copy_plan_line_1_plan_line_action_2
+                sequence: 10
+                condition: '!='
+                value_char: '0'
+                action: n
+                custom_exit_code: 0
+              is_make_copy: false
+            - reference: create_temporary_directory_for_odoo_dockerfile_copy
+              sequence: 11
+              condition: false
+              use_sudo: false
+              path: false
+              command_id:
+                access_level: manager
+                reference: create_temporary_directory_for_odoo_dockerfile
+                name: Create temporary directory for Odoo Dockerfile
+                action: ssh_command
+                allow_parallel_run: false
+                note: Creates temporary directory where Odoo official Dockerfile will
+                  be fetched
+                tag_ids:
+                - reference: docker
+                - reference: odoo
+                path: false
+                code: mkdir -p {{ odoo_base_dockerfile_temp_dir }}
+                server_status: false
+                variable_ids:
+                - access_level: manager
+                  reference: odoo_base_dockerfile_temp_dir
+                  name: Base Odoo Image Download Location
+                  variable_type: s
+                  applied_expression: false
+                  validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+                  validation_message: false
+                  note: |-
+                    Temporary directory where the base Odoo image repo will be downloaded.
+                    This directory will be created automatically.
+                    Usually such directory is located in "/tmp", eg "/tmp/base-odoo-image-repo"
+                    Important! Do NOT use existing directories, because flight plan will delete it after execution.
+                no_split_for_sudo: false
+                if_file_exists: skip
+                disconnect_file: false
+              is_make_copy: false
+            - reference: fetch_cetmix_base_dockerfile_copy
+              sequence: 12
+              condition: false
+              use_sudo: false
+              path: false
+              command_id:
+                access_level: manager
+                reference: fetch_cetmix_official_dockerfile
+                name: Fetch Cetmix base Dockerfile
+                action: ssh_command
+                allow_parallel_run: false
+                note: |-
+                  Fetches base odoo image repo with Dockerfile from GitHub
+                  Following repo is used: https://github.com/cetmix/odoo-docker-official
+                tag_ids:
+                - reference: docker
+                - reference: odoo
+                path: false
+                code: curl -sSL https://github.com/cetmix/cetmix-odoo-docker/tarball/main
+                  | tar zxf - --strip-components=1 -C {{ odoo_base_dockerfile_temp_dir
+                  }}
+                server_status: false
+                variable_ids:
+                - reference: odoo_base_dockerfile_temp_dir
+                no_split_for_sudo: false
+                if_file_exists: skip
+                disconnect_file: false
+              is_make_copy: false
+            - reference: build_base_image_using_cetmix_official_dockerfile_copy
+              sequence: 13
+              condition: false
+              use_sudo: false
+              path: false
+              command_id:
+                access_level: manager
+                reference: build_image_using_cetmix_official_dockerfile
+                name: Build base image using Cetmix official Dockerfile
+                action: ssh_command
+                allow_parallel_run: false
+                note: Builds core Odoo image using Cetmix Dockerfile
+                tag_ids:
+                - reference: docker
+                - reference: odoo
+                path: false
+                code: "docker build {{ odoo_base_dockerfile_temp_dir }}/{{ odoo_version\
+                  \ }} \\\n    -f {{ odoo_base_dockerfile_temp_dir }}/{{ odoo_version\
+                  \ }}/Dockerfile.odoo \\\n    --tag tower-odoo-core:{{ odoo_version\
+                  \ }}-{{ odoo_edition }} \\\n    --build-arg ODOO_VERSION={{ odoo_version\
+                  \ }} \\\n{% if  odoo_source_head %}\n    --build-arg ODOO_HEAD={{\
+                  \ odoo_source_head }} \\\n{% endif %}\n{% if  odoo_edition %}\n\
+                  \    --build-arg ODOO_EDITION={{ odoo_edition }} \\\n{% endif %}\n\
+                  {% if  install_aws_cli == \"yes\" %}\n    --build-arg INSTALL_AWS={{\
+                  \ install_aws_cli }} \\\n{% endif %}\n{% if  install_crudini ==\
+                  \ \"yes\" %}\n    --build-arg INSTALL_CRUDINI={{ install_crudini\
+                  \ }}   \\\n{% endif %}\n{% if  odoo_edition %}\n    --build-arg\
+                  \ ODOO_EDITION={{ odoo_edition }} \\\n{% endif %}\n{% if  odoo_edition\
+                  \ == \"ee\" and odoo_source_head_ee %}\n    --build-arg ODOO_HEAD_EE={{\
+                  \ odoo_source_head_ee }} \\\n{% endif %}\n{% if  odoo_edition ==\
+                  \ \"ee\" %}\n    --build-arg GITHUB_TOKEN=#!cxtower.secret.github_token!#\
+                  \ \\\n{% endif %}\n    --build-arg DOCKER_ODOO_UID={{ docker_odoo_uid\
+                  \ }} \\\n    --build-arg DOCKER_ODOO_GID={{ docker_odoo_gid }} \\\
+                  \n    --build-arg POSTGRES_VERSION={{ postgres_version }}\n    "
+                server_status: false
+                variable_ids:
+                - reference: odoo_base_dockerfile_temp_dir
+                - access_level: manager
+                  reference: install_aws_cli
+                  name: Install AWS cli
+                  variable_type: o
+                  option_ids:
+                  - access_level: manager
+                    reference: install_aws_cli_variable_option_2
+                    sequence: 10
+                    name: 'No'
+                    value_char: 'no'
+                  - access_level: manager
+                    reference: install_aws_cli_variable_option_1
+                    sequence: 10
+                    name: 'Yes'
+                    value_char: 'yes'
+                  applied_expression: false
+                  validation_pattern: false
+                  validation_message: false
+                  note: |-
+                    Used in core image build.
+                    AWS cli used for S3 and other operations.
+                - access_level: manager
+                  reference: install_crudini
+                  name: Install crudini
+                  variable_type: o
+                  option_ids:
+                  - access_level: manager
+                    reference: install_crudini_variable_option_1
+                    sequence: 10
+                    name: 'Yes'
+                    value_char: 'yes'
+                  - access_level: manager
+                    reference: install_crudini_variable_option_2
+                    sequence: 11
+                    name: 'No'
+                    value_char: 'no'
+                  applied_expression: false
+                  validation_pattern: false
+                  validation_message: false
+                  note: |-
+                    crudini is a tool used to managed ini files, such as odoo config.
+                    It's useful in case you need to update configurations inside the container.
+                - access_level: manager
+                  reference: docker_odoo_gid
+                  name: Odoo Docker GID
+                  variable_type: s
+                  applied_expression: false
+                  validation_pattern: false
+                  validation_message: false
+                  note: "Default group id of the \"odoo\" group inside the Docker\
+                    \ container. \n\"101\" is used by the official Odoo images, however\
+                    \ you should pick other one in case it raises conflicts with other\
+                    \ existing groups."
+                - access_level: manager
+                  reference: docker_odoo_uid
+                  name: Odoo Docker UID
+                  variable_type: s
+                  applied_expression: false
+                  validation_pattern: false
+                  validation_message: false
+                  note: "Default user id of the \"odoo\" user inside the Docker container.\
+                    \ \n\"101\" is used by the official Odoo images, however you should\
+                    \ pick other one in case it raises conflicts with other existing\
+                    \ users."
+                - reference: odoo_edition
+                - access_level: manager
+                  reference: odoo_source_head
+                  name: Odoo Source HEAD
+                  variable_type: s
+                  applied_expression: false
+                  validation_pattern: false
+                  validation_message: false
+                  note: |-
+                    Custom HEAD (commit) of Odoo code in the Github repo.
+                    Use this argument if you need to checkout some specific code version.
+                - access_level: manager
+                  reference: odoo_source_head_ee
+                  name: Odoo Source HEAD for EE addons
+                  variable_type: s
+                  applied_expression: false
+                  validation_pattern: false
+                  validation_message: false
+                  note: |-
+                    Custom HEAD (commit) of Odoo Enterprise code in the Github repo.
+                    Use this argument if you need to checkout some specific code version.
+                - reference: odoo_version
+                - reference: postgres_version
+                secret_ids:
+                - reference: github_token
+                  name: Github Token
+                  key_type: s
+                  note: false
+                no_split_for_sudo: false
+                if_file_exists: skip
+                disconnect_file: false
+              action_ids:
+              - reference: build_base_image_using_cetmix_official_dockerfile
+                sequence: 10
+                condition: '!='
+                value_char: '0'
+                action: n
+                custom_exit_code: 0
+                variable_value_ids:
+                - access_level: manager
+                  reference: core_image_build_failed_copy
+                  sequence: 10
+                  variable_id:
+                    access_level: manager
+                    reference: core_image_build_failed
+                    name: Core Image build failed
+                    variable_type: s
+                    applied_expression: false
+                    validation_pattern: false
+                    validation_message: false
+                    note: Used to indicate that core Odoo image was not built due
+                      to error
+                  value_char: '1'
+                  required: false
+              is_make_copy: false
+            - reference: remove_temporary_directory_for_odoo_dockerfile_copy
+              sequence: 14
+              condition: not {{ core_image_build_failed }}
+              use_sudo: false
+              path: false
+              command_id:
+                access_level: manager
+                reference: remove_temporary_directory_for_odoo_dockerfile
+                name: Remove temporary directory for Odoo Dockerfile
+                action: ssh_command
+                allow_parallel_run: false
+                note: Remove temporary directory where base Odoo Dockerfile was be
+                  fetched
+                tag_ids:
+                - reference: docker
+                - reference: odoo
+                path: false
+                code: rm -rf {{ odoo_base_dockerfile_temp_dir }}
+                server_status: false
+                variable_ids:
+                - reference: odoo_base_dockerfile_temp_dir
+                no_split_for_sudo: false
+                if_file_exists: skip
+                disconnect_file: false
+              variable_ids:
+              - reference: core_image_build_failed
+              is_make_copy: false
+            - reference: remove_temporary_directory_for_odoo_dockerfile_copy_2
+              sequence: 15
+              condition: '{{ core_image_build_failed }}'
+              use_sudo: false
+              path: false
+              command_id:
+                reference: remove_temporary_directory_for_odoo_dockerfile
+              action_ids:
+              - reference: remove_temporary_directory_for_odoo_dockerfile
+                sequence: 10
+                condition: ==
+                value_char: '0'
+                action: ec
+                custom_exit_code: -1
+                variable_value_ids:
+                - access_level: manager
+                  reference: core_image_build_failed_copy_2
+                  sequence: 10
+                  variable_id:
+                    reference: core_image_build_failed
+                  value_char: false
+                  required: false
+              variable_ids:
+              - reference: core_image_build_failed
+              is_make_copy: false
+          code: false
+          server_status: false
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        is_make_copy: false
+      - reference: build_odoo_image
+        sequence: 11
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          access_level: manager
+          reference: build_odoo_image
+          name: Build Odoo final image with addons
+          action: ssh_command
+          allow_parallel_run: false
+          note: Build final Odoo image including addons.
+          tag_ids:
+          - reference: docker
+          - reference: odoo
+          path: false
+          code: |-
+            docker build {{ dockerfile_location }} --tag "{{ odoo_image_name }}" \
+                --build-arg ODOO_VERSION={{ odoo_version }} \
+            {% if  odoo_source_head %}
+                --build-arg ODOO_HEAD={{ odoo_source_head }} \
+            {% endif %}
+                --build-arg GITHUB_TOKEN=#!cxtower.secret.github_token!# \
+                --build-arg BITBUCKET_TOKEN=#!cxtower.secret.bitbucket_token!# \
+                --build-arg GITLAB_TOKEN_NAME=#!cxtower.secret.gitlab_token_name!# \
+                --build-arg GITLAB_TOKEN=#!cxtower.secret.gitlab_token!# \
+                --build-arg DOCKER_ODOO_UID={{ docker_odoo_uid }} \
+                --build-arg DB_MANAGER_PASSWORD="{{ odoo_db_manager_password }}" \
+                --build-arg DOCKER_ODOO_GID={{ docker_odoo_gid }} \
+                --build-arg POSTGRES_VERSION={{ postgres_version }} \
+                --build-arg EXTRA_ADDONS_RELEASE='{{ tower.tools.now }}'
+          server_status: false
+          variable_ids:
+          - access_level: manager
+            reference: dockerfile_location
+            name: Dockerfile location
+            variable_type: s
+            applied_expression: false
+            validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+            validation_message: false
+            note: Where Dockerfile is located
+          - reference: odoo_db_manager_password
+          - reference: docker_odoo_gid
+          - reference: docker_odoo_uid
+          - reference: odoo_image_name
+          - reference: odoo_source_head
+          - reference: odoo_version
+          - reference: postgres_version
+          secret_ids:
+          - reference: bitbucket_token
+            name: Bitbucket Token
+            key_type: s
+            note: Used to clone bitbucket repos using https
+          - reference: github_token
+          - reference: gitlab_token
+            name: Gitlab Token
+            key_type: s
+            note: Used to clone Bitbucket repos using https
+          - reference: gitlab_token_name
+            name: Gitlab Token Name
+            key_type: s
+            note: Used to clone Bitbucket repos using https
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        is_make_copy: false
+      - reference: stop_odoo_container
+        sequence: 12
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          reference: stop_odoo_container
+        action_ids:
+        - reference: if_exit_code__0_then_run_next_command
+          sequence: 10
+          condition: '!='
+          value_char: '0'
+          action: n
+          custom_exit_code: 0
+        is_make_copy: false
+      - reference: remove_odoo_container
+        sequence: 13
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          reference: remove_odoo_container
+        action_ids:
+        - reference: if_exit_code__0_then_run_next_command_2
+          sequence: 10
+          condition: '!='
+          value_char: '0'
+          action: n
+          custom_exit_code: 0
+        is_make_copy: false
+      - reference: run_odoo_container_with_shared_pg
+        sequence: 14
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          reference: run_odoo_container_with_shared_pg
+        is_make_copy: false
+    note: |-
+      Use when you need to fetch the latest updates of third party modules,
+
+      Good to know:
+      To make deployment process faster and more flexible, final Odoo image is split into two parts:
+      1. Base Odoo image. Contains Odoo source code, both Community and Enterprise if requested, and all the tools needed to deploy addons.
+      2. Final Odoo image. Takes the base image, adds third party addons and automatically installs all dependencies they require.
+      Hint: if your any of your custom modules depend on an OCA module, you don't need to clone the entire OCA repository. Because such OCA modules will be installed automatically. Eg "queue_job".
+  - access_level: manager
+    reference: clear_docker_cache
+    name: Clear Docker cache
+    sequence: 8
+    action: command
+    command_id:
+      access_level: manager
+      reference: docker_prune
+      name: Docker prune
+      action: ssh_command
+      allow_parallel_run: false
+      note: false
+      tag_ids:
+      - reference: docker
+      path: false
+      code: docker system prune -af
+      server_status: false
+      no_split_for_sudo: false
+      if_file_exists: skip
+      disconnect_file: false
+    use_sudo: false
+    note: |-
+      Use this if you need to free disk space.
+      Important! You should recreate the base image and Odoo image after you run this shortcut.
+  scheduled_task_ids:
+  - reference: update_the_host_system
+    name: Update the host system
+    sequence: 13
+    action: plan
+    plan_id:
+      access_level: manager
+      reference: update_host_system_packages
+      name: Update host system packages
+      allow_parallel_run: false
+      color: 0
+      tag_ids:
+      - reference: system
+        name: System
+        color: 1
+      note: |-
+        Update host system packages.
+        NB: some updates may require host restart.
+      on_error_action: e
+      custom_exit_code: 0
+      line_ids:
+      - reference: update_packages_4
+        sequence: 10
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          access_level: manager
+          reference: update_packages
+          name: Update packages
+          action: ssh_command
+          allow_parallel_run: false
+          note: false
+          os_ids:
+          - reference: debian_10
+            name: Debian 10
+            color: 1
+          - reference: debian_11
+            name: Debian 11
+            color: 1
+            parent_id:
+              reference: debian
+              name: Debian
+              color: 0
+          - reference: macos
+            name: MacOS
+            color: 4
+          - reference: ubuntu_1604
+            name: Ubuntu 16.04
+            color: 2
+          - reference: ubuntu_1804
+            name: Ubuntu 18.04
+            color: 2
+            parent_id:
+              reference: ubuntu
+              name: Ubuntu
+              color: 0
+          - reference: ubuntu_2004
+            name: Ubuntu 20.04
+            color: 1
+            parent_id:
+              reference: ubuntu
+          - reference: ubuntu_2204
+            name: Ubuntu 22.04
+            color: 2
+            parent_id:
+              reference: ubuntu
+          path: false
+          code: DEBIAN_FRONTEND=noninteractive apt-get update
+          server_status: false
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        is_make_copy: false
+      - reference: upgrade_packages
+        sequence: 11
+        condition: false
+        use_sudo: true
+        path: false
+        command_id:
+          access_level: manager
+          reference: upgrade_packages
+          name: Upgrade packages
+          action: ssh_command
+          allow_parallel_run: false
+          note: false
+          os_ids:
+          - reference: debian_10
+          - reference: debian_11
+          - reference: macos
+          - reference: ubuntu_1604
+          - reference: ubuntu_1804
+          - reference: ubuntu_2004
+          - reference: ubuntu_2204
+          path: false
+          code: DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
+          server_status: false
+          no_split_for_sudo: false
+          if_file_exists: skip
+          disconnect_file: false
+        is_make_copy: false
+    interval_number: 1
+    interval_type: weeks
+    next_call: 2025-12-28 23:51:53
+    last_call: 2025-12-21 23:51:53
+  flight_plan_id:
+    access_level: manager
+    reference: odoo_on_hosting_with_dns
+    name: Odoo on hosting with DNS
+    allow_parallel_run: false
+    color: 0
+    tag_ids:
+    - reference: install
+      name: Install
+      color: 6
+    - reference: main
+      name: Main
+      color: 9
+    note: |-
+      Creates an instance on hosting, installs Odoo with Postgres and Nginx in Docker, add a DNS record.
+      Currently supports Hetzner for hosting and Cloudflare for DNS, however can be extended to include other providers.
+    on_error_action: e
+    custom_exit_code: 0
+    line_ids:
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_1_7
+      sequence: 10
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: check_server_configuration
+        name: Check server configuration
+        action: python_code
+        allow_parallel_run: false
+        note: Ensure that server configuration is valid.
+        tag_ids:
+        - reference: system
+        path: false
+        code: "# List of supported hosting providers\nsupported_providers = [\"hetzner\"\
+          ]\n\nexit_code = 0\nmessage = \"\"\nhosting_provider = {{ hosting_provider\
+          \ }}\n\n# Check it server address is set if hosting provider is not defined\n\
+          if not hosting_provider and not (server.ip_v4_address or server.ip_v6_address):\n\
+          \  message += \"You must provide ipv4 or ipv6 address manualy if no provider\
+          \ is configured\"\n  exit_code = -1\nelif hosting_provider and hosting_provider\
+          \ not in supported_providers:\n  message += \"Sorry, hosting provider '\"\
+          + str(hosting_provider) + \"' is not supported yet\"\n  exit_code = -1\n\
+          \n# Postgres\n# Ensure that postgress password is set in the configuration\
+          \ settings.\nif not #!cxtower.secret.postgres_password!#:\n  message +=\
+          \ \"\\nPostgress password is missing. Put it in the 'postgres_password'\
+          \ secret.\"\n  exit_code = -1\n\n# General variables\nfor var in [\"tower_root\"\
+          , \"odoo_root\", \"postgres_root\", \"instance_root\", \"dockerfile_location\"\
+          ]:\n  val = tower.server_get_variable_value(server.reference, var)\n  if\
+          \ not val:\n    message += \"\\n'\"+ var + \"' variable is not defined.\
+          \ You can get pre-configured ones from https://tower.cetmix.com/hangar\"\
+          \n    exit_code = -1\n  elif \"None\" in val:\n    message += \"\\n'\"+\
+          \ var + \"' variable depends on some missing variable value: '\" + val +\"\
+          '\"\n    exit_code = -1\n\n  \n# Odoo\nif not {{ odoo_port }}:\n  message\
+          \ += \"\\nOdoo port is missing. Consider adding a global value in the 'odoo_port'\
+          \ variable, eg '8069'.\"\n  exit_code = -1\nif not {{ odoo_gevent_port }}\
+          \ and not {{ odoo_longpolling_port }}:\n  message += \"\\nOdoo gevent/longpolling\
+          \ port is missing. Consider adding a global value in the 'odoo_gevent_port'\
+          \ variable, eg '8072'.\"\n  exit_code = -1\n\n\n# Cloudflare\nif {{ instance_url\
+          \ }} and {{ dns_provider }} == \"cloudflare\":\n  if not #!cxtower.secret.cloudflare_token!#:\n\
+          \    message += \"\\nCloudflore API token is missing. Put it in the 'cloudflare_token'\
+          \ secret.\"\n    exit_code = -1\n  if not #!cxtower.secret.cloudflare_zone_id!#:\n\
+          \    message += \"\\nCloudflore Zone ID is missing. Put it in the 'cloudflare_zone_id'\
+          \ secret.\"\n    exit_code = -1\n    \n# Hetzner API key\nelif hosting_provider\
+          \ and hosting_provider == \"hetzner\" and not #!cxtower.secret.hetzner_api_token!#:\n\
+          \  message += \"\\nHetzner API key is missing. Put it in the 'hetzner_api_token'\
+          \ secret.\"\n  exit_code = -1\n\n# Certbot email\nif {{ instance_url }}:\n\
+          \  if not {{ instance_certbot_email }}:\n    message += \"\\nCertbot email\
+          \ is missing. Put it in the 'instance_certbot_email' variable.\"\n    exit_code\
+          \ = -1\n  elif \"example.com\" in {{ instance_certbot_email }}:\n    message\
+          \ += \"\\nCertbot email must contain a valid domain. Update the 'instance_certbot_email'\
+          \ variable.\"\n    exit_code = -1\n    \nresult = {\n    \"exit_code\":\
+          \ exit_code,\n    \"message\": message or \"\",\n}"
+        server_status: false
+        variable_ids:
+        - access_level: manager
+          reference: instance_certbot_email
+          name: Certbot Email
+          variable_type: s
+          applied_expression: false
+          validation_pattern: ^(?:[a-z0-9._%+-]+|{{[^{}]+}})(?:@(?:[a-z0-9.-]+\.[a-z]{2,}|{{[^{}]+}})|)(?:{%\s*(if|else|endif)\b[^%]*?%\})*$
+          validation_message: false
+          note: Used for certbot installation
+        - access_level: manager
+          reference: dns_provider
+          name: DNS Provider
+          variable_type: o
+          option_ids:
+          - access_level: manager
+            reference: dns_provider_variable_option_1
+            sequence: 10
+            name: Cloudflare
+            value_char: cloudflare
+          applied_expression: false
+          validation_pattern: false
+          validation_message: false
+          note: false
+        - access_level: manager
+          reference: hosting_provider
+          name: Hosting Provider
+          variable_type: o
+          option_ids:
+          - access_level: manager
+            reference: hosting_provider_variable_option_1
+            sequence: 10
+            name: Hetzner
+            value_char: hetzner
+          applied_expression: false
+          validation_pattern: false
+          validation_message: false
+          note: Server hosting provider, eg Amazon, Digital Ocean or Hetzner.
+        - reference: instance_url
+        - reference: odoo_gevent_port
+        - reference: odoo_longpolling_port
+        - reference: odoo_port
+        secret_ids:
+        - reference: cloudflare_token
+          name: Cloudflare API Token
+          key_type: s
+          note: false
+        - reference: cloudflare_zone_id
+          name: Cloudflare Zone ID
+          key_type: s
+          note: false
+        - reference: hetzner_api_token
+          name: Hetzner API token
+          key_type: s
+          note: false
+        - reference: postgres_password
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_1
+      sequence: 11
+      condition: '{{ hosting_provider }} == "hetzner"'
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_server_on_hetzner
+        name: 'Plan: Server on Hetzner'
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: hosting
+          name: Hosting
+          color: 10
+        - reference: hetzner
+          name: Hetzner
+          color: 1
+        path: false
+        flight_plan_id:
+          access_level: manager
+          reference: create_server_on_hetzner
+          name: Create server on Hetzner
+          allow_parallel_run: false
+          color: 0
+          tag_ids:
+          - reference: hosting
+          - reference: hetzner
+          note: Create a new server on Hetzner cloud
+          on_error_action: e
+          custom_exit_code: 0
+          line_ids:
+          - reference: create_server_on_hetzner_plan_line_1
+            sequence: 10
+            condition: '{{ hetzner_server_id }} is None'
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: create_server_on_hetzner
+              name: Create server on Hetzner
+              action: python_code
+              allow_parallel_run: false
+              note: Creates a new server on Hetzner.com using API
+              path: false
+              code: "# API Token\napi_token = #!cxtower.secret.hetzner_api_token!#\n\
+                \n# Set the required headers\nheaders = {\n    'Authorization': 'Bearer\
+                \ '+ api_token,\n    'Content-Type': 'application/json'\n}\n\n# API\
+                \ URL to create a server\nurl = \"https://api.hetzner.cloud/v1/servers\"\
+                \n\n# Define the payload with server properties\ndata = {\n    \"\
+                name\": {{ tower.server.reference }}.replace(\"_\", \"-\"),  # Hetzner\
+                \ doesn't support '_' in names\n    \"server_type\": {{ hetzner_server_type\
+                \ }}.lower(),       # CX22 -> cx22\n    \"image\": {{ hetzner_os_image\
+                \ }},                        # Ubuntu 24.04 image\n    \"location\"\
+                : {{ hetzner_location }}.lower(),             # NBG1-> nbg1 Nuremberg\
+                \ location (nbg1)\n    \"public_net\": {\n        \"enable_ipv4\"\
+                : True   # Enable IPv4 (request for a new one)\n    },\n    \"ssh_keys\"\
+                : [server.ssh_key_id.reference and server.ssh_key_id.reference.replace(\"\
+                _\", \"-\")]\n}\n\n# Make the request to create the server\nresponse\
+                \ = requests.post(url, headers=headers, data=json.dumps(data))\n\n\
+                # Parse and log the response\nif response.status_code in [200, 201]:\n\
+                \  exit_code = 0\n  result = response.json()\n  \n  # Set server ipv4\
+                \ address and password\n  ip_v4_address = result['server']['public_net']['ipv4']['ip']\n\
+                \  root_password = result['root_password']\n  server.write({\n   \
+                \ \"ip_v4_address\": ip_v4_address,\n    \"ssh_password\": root_password\n\
+                \    })\n  \n  # Save Hetzner server id in variable\n  server_reference\
+                \ = server.reference\n  variable_reference = \"hetzner_server_id\"\
+                \n  hetzner_server_id = result['server']['id']\n  tower.server_set_variable_value(server_reference,\
+                \ variable_reference, hetzner_server_id)\n\nelse:\n  exit_code = response.status_code\n\
+                \  result = response.text\n\nresult = {\n    \"exit_code\": exit_code,\n\
+                \    \"message\": response.json(),\n}"
+              server_status: starting
+              variable_ids:
+              - access_level: manager
+                reference: hetzner_location
+                name: Hetzner Location
+                variable_type: o
+                option_ids:
+                - access_level: manager
+                  reference: hetzner_location_variable_option_1
+                  sequence: 10
+                  name: DE Falkenstein
+                  value_char: fsn1
+                - access_level: manager
+                  reference: hetzner_location_variable_option_2
+                  sequence: 11
+                  name: DE Nuremberg
+                  value_char: nbg1
+                - access_level: manager
+                  reference: hetzner_location_variable_option_3
+                  sequence: 12
+                  name: FI Helsinki
+                  value_char: hel1
+                - access_level: manager
+                  reference: hetzner_location_variable_option_4
+                  sequence: 13
+                  name: US Ashburn, VA
+                  value_char: ash
+                - access_level: manager
+                  reference: hetzner_location_variable_option_5
+                  sequence: 14
+                  name: US Hillsboro, OR
+                  value_char: hil
+                - access_level: manager
+                  reference: hetzner_location_variable_option_6
+                  sequence: 15
+                  name: SG Singapore
+                  value_char: sin
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: Hetzner datacenter
+              - access_level: manager
+                reference: hetzner_os_image
+                name: Hetzner OS Image
+                variable_type: o
+                option_ids:
+                - access_level: manager
+                  reference: hetzner_os_image_variable_option_1
+                  sequence: 10
+                  name: Ubuntu 24.04
+                  value_char: ubuntu-24.04
+                - access_level: manager
+                  reference: hetzner_os_image_variable_option_2
+                  sequence: 11
+                  name: Ubuntu 22.04
+                  value_char: ubuntu-22.04
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: false
+              - access_level: manager
+                reference: hetzner_server_type
+                name: Hetzner Server Type
+                variable_type: o
+                option_ids:
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_1
+                  sequence: 10
+                  name: CX23
+                  value_char: CX23
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_2
+                  sequence: 11
+                  name: CX33
+                  value_char: CX33
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_3
+                  sequence: 12
+                  name: CX43
+                  value_char: CX43
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_4
+                  sequence: 13
+                  name: CX53
+                  value_char: CX53
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_5
+                  sequence: 14
+                  name: CPX12
+                  value_char: CPX12
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_6
+                  sequence: 15
+                  name: CPX22
+                  value_char: CPX22
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_7
+                  sequence: 16
+                  name: CPX32
+                  value_char: CPX31
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_8
+                  sequence: 17
+                  name: CPX42
+                  value_char: CPX42
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_9
+                  sequence: 18
+                  name: CPX52
+                  value_char: CPX52
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_1_2
+                  sequence: 19
+                  name: CPX62
+                  value_char: CPX62
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_2_2
+                  sequence: 20
+                  name: CAX11
+                  value_char: CAX11
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_3_2
+                  sequence: 21
+                  name: CAX21
+                  value_char: CAX21
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_4_2
+                  sequence: 22
+                  name: CAX31
+                  value_char: CAX31
+                - access_level: manager
+                  reference: hetzner_server_type_variable_option_5_2
+                  sequence: 23
+                  name: CAX41
+                  value_char: CAX41
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: false
+              secret_ids:
+              - reference: hetzner_api_token
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            variable_ids:
+            - access_level: manager
+              reference: hetzner_server_id
+              name: Hetzner Server ID
+              variable_type: s
+              applied_expression: false
+              validation_pattern: false
+              validation_message: false
+              note: false
+            is_make_copy: false
+          - reference: create_server_on_hetzner_plan_line_2
+            sequence: 10
+            condition: '{{ hetzner_server_id }} and {{ tower.server.status }} != "running"'
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: check_hetzner_server_running
+              name: Ensure Hetzner server is running
+              action: python_code
+              allow_parallel_run: false
+              note: Check Hetzner server status to ensure it is running
+              path: false
+              code: "# Available variables:\n#  - user: Current Odoo User\n#  - env:\
+                \ Odoo Environment on which the action is triggered\n#  - server:\
+                \ server on which the command is run\n#  - tower: 'cetmix.tower' helper\
+                \ class\n#  - time, datetime, dateutil, timezone: useful Python libraries\n\
+                #  - requests: Python 'requests' library. Available methods: 'post',\
+                \ 'get', 'request'\n#  - json: Python 'json' library. Available methods:\
+                \ 'dumps'\n#  - float_compare: Odoo function to compare floats based\
+                \ on specific precisions\n#  - UserError: Warning Exception to use\
+                \ with raise\n#\n# Each python code command returns the result value\
+                \ which is a dictionary.\n# There are two default keys in the dictionary,\
+                \ e.g.:\n# x = 2*10\n# result = {\n#    \"exit_code\": x,\n#    \"\
+                message\": \"This will be logged as an error message because exit\
+                \ code !=0\",\n# }\n\n# Get server ID\nserver_id = {{ hetzner_server_id\
+                \ }}\n\n\n# Exit if server id is not defined\nif not server_id:\n\
+                \  result = {\n      \"exit_code\": -1,\n      \"message\": \"Server\
+                \ ID is not definded for server\",\n  }\n  \nelse:\n  # ---\n  # Query\
+                \ status from Hetzner\n  # ---\n  \n  status_url = \"https://api.hetzner.cloud/v1/servers/\"\
+                +server_id\n  api_token = #!cxtower.secret.hetzner_api_token!#\n \
+                \ server_status_check_retries = {{ server_status_check_retries }}\
+                \ or \"10\"  # Default numer of retries\n  server_status_check_delay\
+                \ = {{ server_status_check_delay }} or \"15\" # Wait timeout in seconds\n\
+                \  \n  # Set the required headers\n  headers = {\n      'Authorization':\
+                \ 'Bearer '+ api_token,\n      'Content-Type': 'application/json'\n\
+                \  }\n  \n  # Fallback result\n  result = {\n        \"exit_code\"\
+                : -5,\n        \"message\": \"Status update timeout after \" + server_status_check_retries\
+                \  + \" attempts\",\n    }\n  \n  # Query server status\n  for attempt\
+                \ in range(int(server_status_check_retries)):\n    \n    # Make the\
+                \ request to get server details\n    status_response = requests.get(status_url,\
+                \ headers=headers)\n    \n    # Check \n    if status_response.status_code\
+                \ == 200:\n      exit_code = 0\n      result = status_response.json()\n\
+                \      # Extract the server status\n      server_status = result['server']['status']\n\
+                \      if server_status == 'running':\n        result = {\n      \
+                \      \"exit_code\": 0,\n            \"message\": \"Server is running\"\
+                ,\n        }\n        break\n      else:\n        time.sleep(int(server_status_check_delay))\n\
+                \        result = {\n            \"exit_code\": -3,\n            \"\
+                message\": status_response.json(),\n      }\n    else:\n      result\
+                \ = {\n            \"exit_code\": -3,\n            \"message\": \"\
+                Connection error\",\n      }\n      break\n  \n"
+              server_status: running
+              variable_ids:
+              - reference: hetzner_server_id
+              - access_level: manager
+                reference: server_status_check_delay
+                name: Server status check delay
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: Time in seconds before attempts to check a server status
+              secret_ids:
+              - reference: hetzner_api_token
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            variable_ids:
+            - reference: hetzner_server_id
+            is_make_copy: false
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      variable_ids:
+      - reference: hosting_provider
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_1_2
+      sequence: 12
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: check_ssh_connection
+        name: Check SSH connection
+        action: python_code
+        allow_parallel_run: false
+        note: Check if SSH connection is available
+        tag_ids:
+        - reference: system
+        path: false
+        code: |-
+          # Check if host key is configured properly
+          skip_host_key = server.skip_host_key
+
+          # Temporary disable host key check if check is enable but no key is provided
+          if not skip_host_key and not server._get_secret_value("host_key"):
+            server.write({"skip_host_key": True})
+          result = tower.server_check_ssh_connection(server_reference={{ tower.server.reference }})
+
+          # Put the original value back
+          if not skip_host_key:
+            server.write({"skip_host_key": False})
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hosting_with_dns_plan_line_1
+      sequence: 13
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: get_and_save_host_key
+        name: Get and save host key
+        action: python_code
+        allow_parallel_run: false
+        note: |-
+          Fetch host key from server.
+          Attention! Use with care with fully understanding of the consequences.
+        tag_ids:
+        - reference: system
+        path: false
+        code: "# Check if host key is configured properly\nskip_host_key = server.skip_host_key\n\
+          \n# Proceed only if host key check is not disabled and is not defined\n\
+          if not skip_host_key and not server._get_secret_value(\"host_key\"):\n \
+          \ \n  # Temporary disable SSH host check to retrive the host key\n  server.write({\"\
+          skip_host_key\": True})\n  \n  # Fetch the the host key\n  host_key = server._get_host_key_from_host()\n\
+          \  \n  # Save the host key, enable host key check\n  if host_key:\n    server.write({\"\
+          host_key\": host_key, \"skip_host_key\": False})\n  \n  # Revert previous\
+          \ settings\n  else:\n    server.write({\"skip_host_key\": skip_host_key})"
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_1_3
+      sequence: 14
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_update_host_system
+        name: Update host system
+        action: plan
+        allow_parallel_run: false
+        note: Update and upgrade packages
+        tag_ids:
+        - reference: system
+        path: false
+        flight_plan_id:
+          reference: update_host_system_packages
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_1_5
+      sequence: 15
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: install_fail2ban
+        name: Install fail2ban
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: system
+        - reference: install
+        path: false
+        flight_plan_id:
+          access_level: manager
+          reference: install_fail2ban
+          name: Install fail2ban
+          allow_parallel_run: false
+          color: 0
+          tag_ids:
+          - reference: system
+          - reference: install
+          note: false
+          on_error_action: e
+          custom_exit_code: 0
+          line_ids:
+          - reference: install_fail2ban_plan_line_1
+            sequence: 10
+            condition: false
+            use_sudo: true
+            path: false
+            command_id:
+              access_level: manager
+              reference: install_additional_packages
+              name: Install packages for fail2ban
+              action: ssh_command
+              allow_parallel_run: false
+              note: ''
+              tag_ids:
+              - reference: install
+              path: false
+              code: DEBIAN_FRONTEND=noninteractive apt install -y rsyslog fail2ban
+              server_status: false
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+          - reference: install_fail2ban_plan_line_2
+            sequence: 10
+            condition: false
+            use_sudo: true
+            path: false
+            command_id:
+              access_level: manager
+              reference: upload_fail2ban_default_jail
+              name: Upload fail2ban default jail
+              action: file_using_template
+              allow_parallel_run: false
+              note: false
+              path: false
+              file_template_id:
+                reference: fail2ban_jail
+                name: Fail2ban jail
+                source: tower
+                file_type: text
+                server_dir: /etc/fail2ban
+                file_name: jail.local
+                keep_when_deleted: false
+                tag_ids:
+                - reference: system
+                - reference: security
+                  name: Security
+                  color: 1
+                note: Default  jail for fail2ban
+                code: |+
+                  [DEFAULT]
+                  # Ban an IP for 10 minutes (600 seconds) after exceeding the retry limit.
+                  bantime = 600
+
+                  # Look for failed login attempts within this time window (in seconds).
+                  findtime = 600
+
+                  # Number of failures allowed before banning the IP.
+                  maxretry = 2
+
+                  # Optionally, set the default action. Here, we use the iptables multiport action.
+                  # This action bans the IP on all specified ports.
+                  # action = iptables-multiport[name=Default, port="ssh,smtp,apache", protocol=tcp]
+
+                  # Email notification settings (optional)
+                  #destemail = your_email@example.com
+                  #sendername = Fail2Ban
+                  #mta = sendmail
+                  # Uncomment the following line if you want to receive email with whois report and relevant log lines.
+                  # action = %(action_mwl)s
+
+                  ######################################################################
+                  # Jail for SSH
+                  ######################################################################
+                  [sshd]
+                  enabled = true
+                  # If you have changed the default SSH port, update it here.
+                  port = ssh
+                  logpath = /var/log/auth.log
+                  maxretry = 2
+
+              code: false
+              server_status: false
+              no_split_for_sudo: false
+              if_file_exists: overwrite
+              disconnect_file: false
+            is_make_copy: false
+          - reference: install_fail2ban_plan_line_3
+            sequence: 10
+            condition: false
+            use_sudo: true
+            path: false
+            command_id:
+              access_level: manager
+              reference: restart_fail2ban
+              name: Restart fail2ban
+              action: ssh_command
+              allow_parallel_run: false
+              note: Restart fail2ban to apply the jail
+              tag_ids:
+              - reference: system
+              - reference: security
+              path: false
+              code: systemctl restart fail2ban
+              server_status: false
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_2
+      sequence: 16
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_install_docker
+        name: Install Docker
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: docker
+        - reference: install
+        path: false
+        flight_plan_id:
+          access_level: manager
+          reference: install_docker
+          name: Install Docker
+          allow_parallel_run: false
+          color: 0
+          tag_ids:
+          - reference: docker
+          - reference: system
+          - reference: install
+          note: Install and configure Docker
+          on_error_action: e
+          custom_exit_code: 0
+          line_ids:
+          - reference: install_docker_2_plan_line_3
+            sequence: 12
+            condition: false
+            use_sudo: true
+            path: false
+            command_id:
+              access_level: manager
+              reference: install_curl
+              name: Install curl
+              action: ssh_command
+              allow_parallel_run: false
+              note: false
+              os_ids:
+              - reference: debian_10
+              - reference: debian_11
+              - reference: macos
+              - reference: ubuntu_1604
+              - reference: ubuntu_1804
+              - reference: ubuntu_2004
+              - reference: ubuntu_2204
+              tag_ids:
+              - reference: system
+              - reference: install
+              path: false
+              code: apt-get install -y curl
+              server_status: false
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+          - reference: install_docker_2_plan_line_5
+            sequence: 14
+            condition: false
+            use_sudo: true
+            path: false
+            command_id:
+              access_level: manager
+              reference: install_docker
+              name: Install Docker
+              action: ssh_command
+              allow_parallel_run: false
+              note: Download and install Docker using script from the Docker website
+              path: /tmp
+              code: ' curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+                && rm -f get-docker.sh'
+              server_status: false
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+          - reference: install_docker_2_plan_line_6
+            sequence: 15
+            condition: '{{ tower.server.username }} != "root"'
+            use_sudo: true
+            path: false
+            command_id:
+              access_level: manager
+              reference: add_user_to_docker_group
+              name: Add user to "docker" group
+              action: ssh_command
+              allow_parallel_run: false
+              note: Adds current user to "docker" group to allow running Docker commands
+                without 'sudo'
+              tag_ids:
+              - reference: docker
+              - reference: system
+              path: false
+              code: |-
+                {% if tower.server.os == "Debian 11" %}
+                /usr/sbin/usermod -a -G docker {{ tower.server.username }}
+                {% else %}
+                usermod -a -G docker {{ tower.server.username }}
+                {% endif %}
+              server_status: false
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_3
+      sequence: 17
+      condition: '{{ tower_docker_network }}'
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: create_docker_network
+        name: Create Docker network
+        action: ssh_command
+        allow_parallel_run: false
+        note: Creates a dedicated Docker network for Tower installation if this network
+          doesn't exist.
+        tag_ids:
+        - reference: docker
+        - reference: install
+        path: false
+        code: docker network ls --filter name=^{{ tower_docker_network }}$ -q | grep
+          -q . || docker network create {{ tower_docker_network }}
+        server_status: false
+        variable_ids:
+        - reference: tower_docker_network
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      action_ids:
+      - reference: odoo_on_hetzner_with_cloudflare_plan_line_3_plan_line_action_1
+        sequence: 10
+        condition: ==
+        value_char: '1'
+        action: n
+        custom_exit_code: 0
+      variable_ids:
+      - reference: tower_docker_network
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_4
+      sequence: 18
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: create_odoo_instance_directories
+        name: Create Odoo instance directories
+        action: ssh_command
+        allow_parallel_run: false
+        note: "1. Odoo data location where file store will be mounted.\n2. Odoo Dockerfile\
+          \ location. "
+        tag_ids:
+        - reference: odoo
+        - reference: install
+        path: false
+        code: mkdir -p {{ odoo_data }} && mkdir -p {{ dockerfile_location }}
+        server_status: false
+        variable_ids:
+        - reference: dockerfile_location
+        - reference: odoo_data
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_2_2
+      sequence: 19
+      condition: false
+      use_sudo: true
+      path: false
+      command_id:
+        access_level: manager
+        reference: install_acl
+        name: Install ACL
+        action: ssh_command
+        allow_parallel_run: false
+        note: Installs ACL. Used to set default access rights for directories
+        tag_ids:
+        - reference: system
+        - reference: install
+        path: false
+        code: apt install -y acl
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_5
+      sequence: 20
+      condition: false
+      use_sudo: true
+      path: false
+      command_id:
+        access_level: manager
+        reference: set_odoo_data_directory_default_access_rights
+        name: Set Odoo data directory default access rights
+        action: ssh_command
+        allow_parallel_run: false
+        note: Ensure that "odoo" user from inside the Odoo Docker container has "write"
+          access to the file store files
+        tag_ids:
+        - reference: odoo
+        - reference: install
+        path: false
+        code: setfacl -PRm u:{{ docker_odoo_uid }}:rwx {{ odoo_data }}
+        server_status: false
+        variable_ids:
+        - reference: docker_odoo_uid
+        - reference: odoo_data
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_7
+      sequence: 21
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_install_shared_pg
+        name: Install shared PG
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: docker
+        - reference: install
+        - reference: postgres
+          name: Postgres
+          color: 8
+        path: false
+        flight_plan_id:
+          access_level: manager
+          reference: run_shared_postgres
+          name: Run shared Postgres
+          allow_parallel_run: false
+          color: 0
+          tag_ids:
+          - reference: docker
+          - reference: postgres
+          note: |-
+            Create Postgres container to be used by other containers.
+            Contained is attached to the Tower Docker network if available.
+          on_error_action: e
+          custom_exit_code: 0
+          line_ids:
+          - reference: run_shared_postgres_plan_line_1
+            sequence: 10
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: create_shared_pg_directories
+              name: Create shared PG directories
+              action: ssh_command
+              allow_parallel_run: false
+              note: Creates directories for shared PG
+              tag_ids:
+              - reference: install
+              - reference: postgres
+              path: false
+              code: mkdir -p {{ shared_postgres_data }}
+              server_status: false
+              variable_ids:
+              - access_level: manager
+                reference: shared_postgres_data
+                name: Shared Posggres Data
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: Shared Postgres container data location
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+          - reference: run_shared_postgres_plan_line_2
+            sequence: 11
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: run_shared_pg
+              name: Run shared PG
+              action: ssh_command
+              allow_parallel_run: false
+              note: false
+              tag_ids:
+              - reference: install
+              - reference: postgres
+              path: false
+              code: |-
+                docker run -d -e POSTGRES_USER={{ postgres_user }} -e POSTGRES_PASSWORD=#!cxtower.secret.postgres_password!# \
+                    -e POSTGRES_DB=postgres \
+                {% if pgdata %}
+                    -e PGDATA={{ pgdata or "/var/lib/postgresql/data"}} \
+                {% endif %}
+                {% if  tower_docker_network %}
+                    --network={{ tower_docker_network }} \
+                {% endif %}
+                {% if  postgres_shm_size %}
+                    --shm-size={{ postgres_shm_size }}\
+                {% endif %}
+                    --restart {{ shared_postgres_restart_policy }} \
+                    -v {{ shared_postgres_data }}:{{ pgdata }} \
+                {% if  postgres_port %}
+                    -p {{ postgres_port }}:5432 \
+                {% endif %}
+                    --name {{ shared_postgres_name }} postgres:{{ postgres_version }} \
+                {% if  pg_max_connections %}
+                    -c max_connections={{ pg_max_connections }} \
+                {% endif %}
+                {% if  pg_shared_buffers %}
+                    -c shared_buffers={{ pg_shared_buffers }} \
+                {% endif %}
+                {% if  pg_effective_cache_size %}
+                    -c effective_cache_size={{ pg_effective_cache_size }} \
+                {% endif %}
+                {% if  pg_maintenance_work_mem %}
+                    -c maintenance_work_mem={{ pg_maintenance_work_mem }} \
+                {% endif %}
+                {% if  pg_checkpoint_completion_target %}
+                    -c checkpoint_completion_target={{ pg_checkpoint_completion_target }} \
+                {% endif %}
+                {% if  pg_wal_buffers %}
+                    -c wal_buffers={{ pg_wal_buffers }} \
+                {% endif %}
+                {% if  pg_default_statistics_target %}
+                    -c default_statistics_target={{ pg_default_statistics_target }} \
+                {% endif %}
+                {% if  pg_random_page_cost %}
+                    -c random_page_cost={{ pg_random_page_cost }} \
+                {% endif %}
+                {% if  pg_effective_io_concurrency %}
+                    -c effective_io_concurrency={{ pg_effective_io_concurrency }} \
+                {% endif %}
+                {% if  pg_work_mem %}
+                    -c work_mem={{ pg_work_mem }} \
+                {% endif %}
+                {% if  pg_min_wal_size %}
+                    -c min_wal_size={{ pg_min_wal_size }} \
+                {% endif %}
+                {% if  pg_max_wal_size %}
+                    -c max_wal_size={{ pg_max_wal_size }} \
+                {% endif %}
+                {% if  pg_max_worker_processes %}
+                    -c max_worker_processes={{ pg_max_worker_processes }} \
+                {% endif %}
+                {% if  pg_max_parallel_workers_per_gather %}
+                    -c max_parallel_workers_per_gather={{ pg_max_parallel_workers_per_gather }} \
+                {% endif %}
+                {% if  pg_max_parallel_workers %}
+                    -c max_parallel_workers={{ pg_max_parallel_workers }} \
+                {% endif %}
+                {% if  pg_max_parallel_maintenance_workers %}
+                    -c max_parallel_maintenance_workers={{ pg_max_parallel_maintenance_workers }} \
+                {% endif %}
+                {% if  pg_autovacuum_max_workers %}
+                    -c autovacuum_max_workers={{ pg_autovacuum_max_workers }} \
+                {% endif %}
+                {% if  pg_autovacuum_naptime %}
+                    -c autovacuum_naptime={{ pg_autovacuum_naptime }} \
+                {% endif %}
+                {% if  pg_autovacuum_work_mem %}
+                    -c autovacuum_work_mem={{ pg_autovacuum_work_mem }} \
+                {% endif %}
+              server_status: false
+              variable_ids:
+              - access_level: manager
+                reference: pgdata
+                name: PGDATA
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: |-
+                  Specifies the data directory location within the Postgres container.
+                  Do not modify unless really needed
+              - access_level: manager
+                reference: pg_autovacuum_max_workers
+                name: Postgres Autovacuum Max Workers
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: |-
+                  Meaning: Maximum number of autovacuum worker processes that can run at the same time.
+                  Default: 3
+                  Effect:
+                  If you have many tables needing vacuum/analyze at once, only 3 will be processed in parallel.
+                  Increasing this value allows PostgreSQL to process more tables simultaneously, which can reduce bloat and dead tuples buildup faster.
+                  But each worker consumes resources (CPU, memory, I/O). Too many workers on a busy system can compete with your queries.
+              - access_level: manager
+                reference: pg_autovacuum_naptime
+                name: Postgres Autovacuum Naptime
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Meaning: Time between autovacuum rounds \u2014 i.e., how often\
+                  \ the autovacuum launcher wakes up to check for tables needing maintenance.\n\
+                  Default: 1 minute\nEffect:\nAt 30s, autovacuum checks twice per\
+                  \ minute instead of once.\nMore frequent checks \u2192 more responsive\
+                  \ cleanup, especially for very active tables.\nToo aggressive checks\
+                  \ can increase system load, but usually 30s is safe for busy databases."
+              - access_level: manager
+                reference: pg_autovacuum_work_mem
+                name: Postgres Autovacuum Work Mem
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Meaning: Memory available per autovacuum worker for processing.\n\
+                  Default: -1 (uses maintenance_work_mem, often 64MB).\nEffect:\n\
+                  Higher memory allows vacuum to use larger internal sort/scan structures\
+                  \ (useful for big tables with lots of dead tuples).\nReduces the\
+                  \ chance that the worker spills to disk, which is slow.\nSince this\
+                  \ is per worker, with autovacuum_max_workers=3, the total potential\
+                  \ memory consumption is 3 \xD7 256MB = 768MB."
+              - access_level: manager
+                reference: pg_checkpoint_completion_target
+                name: Postgres Checkpoint Completion Target
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Controls how gradually checkpoints are written to disk \u2014\
+                  \ it\u2019s a value between 0.0 and 1.0 that tells PostgreSQL what\
+                  \ fraction of the checkpoint interval it should spread the writes\
+                  \ over.\nCheckpoints flush dirty pages (modified data in memory)\
+                  \ to disk to ensure durability. This can cause I/O spikes if too\
+                  \ many pages are written all at once.\npg_checkpoint_completion_target\
+                  \ helps smooth out disk I/O by spreading the work over time.\nDefault:\
+                  \ 0.5\nRecommended: 0.7 \u2013 0.9 for most production systems"
+              - access_level: manager
+                reference: pg_default_statistics_target
+                name: Postgres Default Statistics Target
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: |-
+                  Controls the amount of statistical data PostgreSQL collects about each column during ANALYZE. This data helps the query planner make smart decisions about which indexes and join strategies to use.
+                  PostgreSQL uses column statistics to estimate:
+                  Data distribution (e.g. histograms, most common values)
+                  Row selectivity (how many rows match a filter)
+                  Join cardinality (how many rows will result from a join)
+                  Higher stats target = more accurate estimates = better query plans
+                  But: more stats = longer ANALYZE time and larger pg_statistic table.
+                  Default: 100
+                  Allowed Range: 0 to 10,000
+              - access_level: manager
+                reference: pg_effective_cache_size
+                name: Postgres Effective Cache Size
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "A PostgreSQL planner hint \u2014 it estimates how much memory\
+                  \ is available for caching data, including:\nOS-level disk cache\
+                  \ (the page cache)\nPostgreSQL\u2019s shared_buffers\nAnything else\
+                  \ that helps avoid disk reads\nIt doesn\u2019t allocate memory \u2014\
+                  \ it just helps PostgreSQL decide if using an index is worth it.\
+                  \ A higher value makes index scans and nested loops look more appealing\
+                  \ in the query planner.\nDefault: 4GB (on many systems)\nTypical\
+                  \ recommendation:\n\U0001F449 Set it to about 50\u201375% of your\
+                  \ total system memory"
+              - access_level: manager
+                reference: pg_effective_io_concurrency
+                name: Postgres Effective I/O Concurrency
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: |-
+                  Tells the query planner how many I/O operations (disk reads) your storage system can handle in parallel.
+                  It affects cost estimates for operations that involve many disk reads, such as: Bitmap index scans
+                  Index-only scans, Sequential scans on large tables.
+                  If PostgreSQL knows your system can read multiple blocks at once, it may favor parallel I/O strategies.
+                  Default: 1
+                  Range: 0 (disable) to 1000
+              - access_level: manager
+                reference: pg_maintenance_work_mem
+                name: Postgres Maintenancem Work Memory
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Controls how much memory PostgreSQL can use per session for\
+                  \ maintenance operations, including: VACUUM, ANALYZE, CREATE INDEX,\
+                  \ ALTER TABLE, ADD FOREIGN KEY, REINDEX\nDefault: 64MB\nRecommended\
+                  \ range: 128MB \u2013 1GB+ (depending on your available RAM and\
+                  \ workload)"
+              - access_level: manager
+                reference: pg_max_connections
+                name: Postgres Max Connections
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Defines the maximum number of concurrent client connections\
+                  \ allowed to PostgreSQL at any one time.\nEvery connection (via\
+                  \ psql, app server, pgAdmin, etc.) uses:\nA backend process\nA slice\
+                  \ of memory (especially work_mem, session memory, etc.)\nDefault:\
+                  \ 100\nRange: 1 to 262143 (but practically much lower)\nRealistic\
+                  \ safe values:\nSmall servers: 50\u2013200\nMid-sized: 200\u2013\
+                  500\nLarge (with pooling): 500+"
+              - access_level: manager
+                reference: pg_max_parallel_maintenance_workers
+                name: Postgres Max Parallel Maintenance Workers
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^\d+$
+                validation_message: false
+                note: |-
+                  Controls how many parallel worker processes PostgreSQL can use for maintenance operations, specifically: CREATE INDEX, REINDEX, VACUUM (in some cases).
+                  It defines the maximum number of workers that PostgreSQL can use per maintenance command to speed up operations by processing index pages in parallel.
+                  Default: 2
+                  Range: 0 to max_parallel_workers
+              - access_level: manager
+                reference: pg_max_parallel_workers
+                name: Postgres Max Parallel Workers
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^\d+$
+                validation_message: false
+                note: |-
+                  Setting that defines the total number of parallel worker processes the system can use across all queries at the same time.
+                  It sets a global cap on the number of parallel workers used for Parallel queries (SELECT, CREATE INDEX, etc.), Background maintenance tasks (if parallelized), Any other internal use of parallel workers.
+                  This number must be less than or equal to max_worker_processes, because parallel workers are a subset of total background workers.
+                  Default: 8
+                  Allowed Range: 0 to max_worker_processes
+              - access_level: manager
+                reference: pg_max_parallel_workers_per_gather
+                name: Postgres Max Parallel Workers per Gather
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^\d+$
+                validation_message: false
+                note: |-
+                  Configuration setting that controls the maximum number of parallel worker processes a single parallel query (like a SELECT) can use during a Gather or Gather Merge operation.
+                  When PostgreSQL runs a query with parallel execution, it uses a "gather" node to collect results from multiple parallel worker processes.
+                  pg_max_parallel_workers_per_gather limits how many workers a single query can use in that process.
+                  Default: 2
+                  Range: 0 to max_parallel_workers
+              - access_level: manager
+                reference: pg_max_wal_size
+                name: Postgres Max Wal Size
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Setting that defines the maximum size the WAL (Write-Ahead\
+                  \ Log) directory (pg_wal/) is allowed to grow between automatic\
+                  \ checkpoints.\nPostgreSQL writes all changes to WAL before flushing\
+                  \ to disk.\nIf WAL grows too large, PostgreSQL forces a checkpoint\
+                  \ to flush data and clean up.\nThis setting tells PostgreSQL:\n\u201C\
+                  Don\u2019t let WAL exceed this size \u2014 if it does, trigger a\
+                  \ checkpoint.\u201D\nDefault (PostgreSQL 13+): 1GB\nTypical values\
+                  \ for production: 2GB to 16GB or more depending on Disk speed. Write\
+                  \ volume. Checkpoint tuning strategy."
+              - access_level: manager
+                reference: pg_max_worker_processes
+                name: Postgres Max Worker Processes
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^\d+$
+                validation_message: false
+                note: |-
+                  Defines the maximum number of background worker processes PostgreSQL can run at the same time.
+                  Default: 8
+                  Minimum: 1
+                  Maximum: Usually limited by system resources
+              - access_level: manager
+                reference: pg_min_wal_size
+                name: Postgres Min WAL Size
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "PostgreSQL configuration parameter that sets the minimum size\
+                  \ the WAL (Write-Ahead Log) directory (pg_wal/) will try to maintain,\
+                  \ even after a checkpoint.\nWhen PostgreSQL writes changes, it first\
+                  \ logs them in WAL files.\nOver time, these WAL files can pile up.\n\
+                  After a checkpoint, PostgreSQL may delete old WAL files\u2014but\
+                  \ not below pg_min_wal_size.\nDefault: 80MB\nTypical values: 512MB,\
+                  \ 1GB, even 2GB+ for write-heavy systems."
+              - access_level: manager
+                reference: postgres_port
+                name: Postgres Port
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^\d+$
+                validation_message: false
+                note: |-
+                  Use this variable only if you need to expose PG port.
+                  Otherwise default Postgres port will be used.
+              - access_level: manager
+                reference: pg_random_page_cost
+                name: Postgres Random Page Cost
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "PostgreSQL planner setting that influences how expensive it\
+                  \ thinks random I/O is when deciding whether to use an index scan\
+                  \ or a sequential scan.\nHigher value = Random reads are expensive\
+                  \ \u2192 favors sequential scans.\nLower value = Random reads are\
+                  \ cheaper \u2192 more likely to choose index scans.\nDefault: 4.0\n\
+                  Typical tuned values: between 1.1 and 2.5, depending on hardware\
+                  \ and workload."
+              - access_level: manager
+                reference: pg_shared_buffers
+                name: Postgres Shared Buffers
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Controls how much memory PostgreSQL uses for caching data (tables,\
+                  \ indexes, etc.) in RAM.\nIt\u2019s PostgreSQL\u2019s main memory\
+                  \ cache.\nWhen a query runs, PostgreSQL first looks in shared_buffers\
+                  \ before going to disk.\nIt reduces I/O, boosts performance, and\
+                  \ helps PostgreSQL serve repeat queries faster."
+              - access_level: manager
+                reference: postgres_shm_size
+                name: Postgres Shared Memory Size
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Refers to the amount of shared memory allocated to PostgreSQL,\
+                  \ especially when running PostgreSQL inside a Docker container.\
+                  \ It\u2019s particularly important for features like parallel queries,\
+                  \ in-memory operations, and performance tuning.\nDefault is too\
+                  \ low (64MB).\nFor production, at least 256MB or 512MB is often\
+                  \ recommended.\nFor workloads with high concurrency or parallel\
+                  \ queries, 1GB+ may help."
+              - access_level: manager
+                reference: postgres_user
+                name: Postgres User
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: This user will be used to connect to Postgres server
+              - reference: postgres_version
+              - access_level: manager
+                reference: pg_wal_buffers
+                name: Postgres WAL Buffers
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Configuration setting that controls the amount of memory reserved\
+                  \ for buffering WAL (Write-Ahead Logging) data before it's written\
+                  \ to disk.\nEvery time PostgreSQL modifies data (e.g. insert, update,\
+                  \ delete), it first writes a WAL record.\nThese WAL records are\
+                  \ temporarily stored in memory (WAL buffers) before being flushed\
+                  \ to disk.\nThis buffering improves performance by reducing the\
+                  \ number of disk writes.\nIf shared_buffers is \u2264 512MB \u2192\
+                  \ pg_wal_buffers = 16MB\nOtherwise \u2192 calculated automatically\
+                  \ by PostgreSQL (often 1/32 of shared_buffers, capped at 16MB in\
+                  \ older versions, but higher in newer ones)."
+              - access_level: manager
+                reference: pg_work_mem
+                name: Postgres Work Mem
+                variable_type: s
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: "Controls how much memory is allocated per operation for internal\
+                  \ query operations like Sorts, Hash joins, Materialized CTEs, Hash\
+                  \ aggregations.\nEach time PostgreSQL runs a sort or join, it can\
+                  \ use up to work_mem before spilling to disk (which is much slower).\
+                  \ So:\nHigher work_mem \u2192 Faster queries (if memory allows).\n\
+                  Too high \u2192 Risk of out-of-memory crashes, especially with many\
+                  \ concurrent queries."
+              - reference: shared_postgres_data
+              - reference: shared_postgres_name
+              - access_level: manager
+                reference: shared_postgres_restart_policy
+                name: Shared Postgres Restart Policy
+                variable_type: o
+                option_ids:
+                - access_level: manager
+                  reference: shared_postgres_restart_policy_variable_option_1
+                  sequence: 10
+                  name: Do not restart
+                  value_char: 'no'
+                - access_level: manager
+                  reference: shared_postgres_restart_policy_variable_option_2
+                  sequence: 11
+                  name: Restart if it was running
+                  value_char: unless-stopped
+                - access_level: manager
+                  reference: shared_postgres_restart_policy_variable_option_3
+                  sequence: 12
+                  name: Always restart
+                  value_char: always
+                applied_expression: false
+                validation_pattern: false
+                validation_message: false
+                note: |-
+                  Restart policy of the shared Postgres container.
+                  Tells Docker what to do with the container after the host system was restarted.
+              - reference: tower_docker_network
+              secret_ids:
+              - reference: postgres_password
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      action_ids:
+      - reference: odoo_on_hetzner_with_cloudflare_plan_line_7_plan_line_action_1
+        sequence: 10
+        condition: ==
+        value_char: '125'
+        action: n
+        custom_exit_code: 0
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_8
+      sequence: 22
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_build_odoo_core_image
+        name: Build Odoo core image
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: docker
+        - reference: odoo
+        path: false
+        flight_plan_id:
+          access_level: manager
+          reference: build_odoo_image_from_cetmix_dockerfile
+          name: Build Odoo base image
+          allow_parallel_run: false
+          color: 0
+          tag_ids:
+          - reference: docker
+          - reference: odoo
+          note: Builds a core Odoo image using Cetmix Dockerfile designed for Tower
+          on_error_action: e
+          custom_exit_code: 0
+          line_ids:
+          - reference: create_temporary_directory_for_odoo_dockerfile_2
+            sequence: 10
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              reference: create_temporary_directory_for_odoo_dockerfile
+            is_make_copy: false
+          - reference: fetch_cetmix_official_dockerfile
+            sequence: 11
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              reference: fetch_cetmix_official_dockerfile
+            is_make_copy: false
+          - reference: build_image_using_cetmix_official_dockerfile
+            sequence: 12
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              reference: build_image_using_cetmix_official_dockerfile
+            action_ids:
+            - reference: if_exit_code__0_then_run_next_command_30
+              sequence: 10
+              condition: '!='
+              value_char: '0'
+              action: n
+              custom_exit_code: 0
+              variable_value_ids:
+              - access_level: manager
+                reference: core_image_build_failed_variable_value_1
+                sequence: 10
+                variable_id:
+                  reference: core_image_build_failed
+                value_char: '1'
+                required: false
+            is_make_copy: false
+          - reference: remove_temporary_directory_for_odoo_dockerfile_2
+            sequence: 13
+            condition: not {{ core_image_build_failed }}
+            use_sudo: false
+            path: false
+            command_id:
+              reference: remove_temporary_directory_for_odoo_dockerfile
+            variable_ids:
+            - reference: core_image_build_failed
+            is_make_copy: false
+          - reference: build_odoo_image_from_cetmix_dockerfile_plan_line_1
+            sequence: 14
+            condition: '{{ core_image_build_failed }}'
+            use_sudo: false
+            path: false
+            command_id:
+              reference: remove_temporary_directory_for_odoo_dockerfile
+            action_ids:
+            - reference: build_odoo_image_from_cetmix_dockerfile_plan_line_1_plan_line_action_1
+              sequence: 10
+              condition: ==
+              value_char: '0'
+              action: ec
+              custom_exit_code: -1
+            variable_ids:
+            - reference: core_image_build_failed
+            is_make_copy: false
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_9
+      sequence: 23
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: upload_odoo_addons_image_dockerfile
+        name: Upload Odoo addons image Dockerfile
+        action: file_using_template
+        allow_parallel_run: true
+        note: Some note
+        tag_ids:
+        - reference: docker
+        - reference: odoo
+        path: false
+        file_template_id:
+          reference: cetmix_odoo_image_install_addons
+          name: 'Cetmix Odoo image: install addons'
+          source: tower
+          file_type: text
+          server_dir: '{{ dockerfile_location }}'
+          file_name: Dockerfile
+          keep_when_deleted: false
+          tag_ids:
+          - reference: docker
+          - reference: odoo
+          note: This is a new dockerfile that benefits from smart layer caching
+          code: "# This image is designed to be used with Cetmix Tower <https://cetmix.com/tower>\n\
+            # However it can be used for standalone deployments too.\n# Parts of both\
+            \ Odoo and OCA Docker files are being used. \n# Copyright 2024 Cetmix\
+            \ OU <https://cetmix.com>\n#\n# This installs extra addons in the image\
+            \ built using Dockerfile.odoo\nARG ODOO_VERSION\nFROM tower-odoo-core:{{\
+            \ odoo_version }}-{{ odoo_edition }}\nLABEL maintainer=\"Cetmix OU <https://cetmix.com>\"\
+            \nARG ODOO_VERSION\n\n# Tokens to clone private repos\nARG GITHUB_TOKEN\n\
+            ARG BITBUCKET_TOKEN\nARG GITLAB_TOKEN_NAME\nARG GITLAB_TOKEN\n\nARG TMP_ADDONS_DIR=/tmp/getaddons\n\
+            \nUSER root\n\n# Install extra packages\n{% if install_python_packages=='yes'\
+            \ %}\nCOPY ./extra-packages.txt /tmp\nRUN pip install -r /tmp/extra-packages.txt\n\
+            {% endif %}\n\n# Clone extra addons\n# This arg is used for cache invalidation\
+            \ so every layer below will be rebuilt\nARG EXTRA_ADDONS_RELEASE=put_any_value_here\n\
+            \n# Copy addons list file\nCOPY ./addons.yml $TMP_ADDONS_DIR\n\n# Git\
+            \ settings used by GitAggregator\nENV GIT_USERNAME=\"Doge\"\nENV GIT_EMAIL=\"\
+            doge@meme.example.com\"\n\n# Run git-aggregator\nRUN git config --global\
+            \ user.email ${GIT_EMAIL} && git config --global user.name ${GIT_USERNAME}\
+            \ && \\\n    cd $TMP_ADDONS_DIR && gitaggregate -c  $TMP_ADDONS_DIR/addons.yml\
+            \ --expand-env\n\n# Prepare the destination directory\nENV ADDONS_DIR=/opt/extra-addons\n\
+            RUN mkdir $ADDONS_DIR \\\n    && chown odoo $ADDONS_DIR\n\n# Move all\
+            \ addons to their final destination\nRUN bash -c ' \\\n    # Function\
+            \ to check each directory and skip symlinks \\\n    check_directory()\
+            \ { \\\n        local dir=\"$1\"; \\\n        # If this is a symlink,\
+            \ do nothing \\\n        if [[ -L \"$dir\" ]]; then \\\n            return;\
+            \ \\\n        fi; \\\n        if [[ -f \"$dir/__manifest__.py\" ]]; then\
+            \ \\\n            cp -r -P \"$dir\" \"$ADDONS_DIR\"; \\\n        else\
+            \ \\\n            for subdir in \"$dir\"/*/; do \\\n                if\
+            \ [[ -d \"$subdir\" && ! -L \"$subdir\" ]]; then \\\n                \
+            \    check_directory \"$subdir\"; \\\n                fi; \\\n       \
+            \     done; \\\n        fi; \\\n    }; \\\n    # If __manifest__.py exists\
+            \ in the top-level directory, copy the entire directory \\\n    if [[\
+            \ -f \"$TOP_LEVEL_DIR/__manifest__.py\" ]]; then \\\n        cp -r -P\
+            \ \"$TMP_ADDONS_DIR\" \"$ADDONS_DIR\"; \\\n    else \\\n        check_directory\
+            \ \"$TMP_ADDONS_DIR\"; \\\n    fi; \\\n    '\nRUN rm -rf $TMP_ADDONS_DIR\n\
+            \n# List addons\nRUN  ls -lah $ADDONS_DIR && rm -rf $TMP_ADDONS_DIR\n\n\
+            # Install external dependencies\nRUN if [ \"$(ls -A $ADDONS_DIR 2>/dev/null)\"\
+            \ ]; then \\\n        deps=$(manifestoo -d $ADDONS_DIR list-external-dependencies\
+            \ deb --transitive --ignore-missing); \\\n        if [ -n \"$deps\" ];\
+            \ then \\\n            apt-get update -qq && \\\n            DEBIAN_FRONTEND=noninteractive\
+            \ apt-get install -qq --no-install-recommends ${deps}; \\\n        fi;\
+            \ \\\n    fi\n\n# Create hatch config file\nRUN if [ \"$(ls -A $ADDONS_DIR\
+            \ 2>/dev/null)\" ]; then \\\n    printf \"[build-system]\\nrequires =\
+            \ ['hatchling', 'hatch-odoo']\\nbuild-backend = 'hatchling.build'\\n\\\
+            n[project]\\nname = 'extra-addons'\\nversion = '1.0'\\ndynamic = ['dependencies']\\\
+            n\\n[tool.hatch.metadata.hooks.odoo-addons-dependencies]\\n\\n[tool.hatch.build.hooks.odoo-addons-dirs]\\\
+            n\\n[tool.hatch-odoo]\\nodoo_version_override = \\\"%s\\\"\\ndependencies\
+            \ = ['click-odoo-contrib']\\naddons_dirs = ['.']\\n\" \"$ODOO_VERSION\"\
+            \ > /opt/extra-addons/pyproject.toml; \\\nfi\n\n\n# This PEP 503 index\
+            \ uses odoo addons from OCA and redirects the rest to PyPI,\n# in effect\
+            \ hiding all non-OCA Odoo addons that are on PyPI.\nENV PIP_INDEX_URL=https://wheelhouse.odoo-community.org/oca-simple-and-pypi\n\
+            \n# Install extra addons\nRUN if [ \"$(ls -A $ADDONS_DIR 2>/dev/null)\"\
+            \ ]; then cd $ADDONS_DIR && pip install -e .; fi\n\n# Install OpenUpgrade\
+            \ if required\nARG INSTALL_OPENUPGRADE\n\n# NB: Current script supports\
+            \ targed verions 14.0+\nRUN if [ \"$INSTALL_OPENUPGRADE\" = \"yes\" ];\
+            \ then \\\n    pip install git+https://github.com/OCA/openupgradelib.git@master#egg=openupgradelib\
+            \ && \\\n    git clone --depth=1 --branch=${ODOO_VERSION} https://github.com/cetmix/OpenUpgrade.git\
+            \ ${ADDONS_DIR}/OpenUpgrade && \\\n    ver=$(echo ${ODOO_VERSION} | cut\
+            \ -d. -f1); \\\n    if [ \"$ver\" -lt 16 ]; then \\\n        pip install\
+            \ odoo{% if odoo_version == \"14.0\" %}14{% endif %}-addon-openupgrade-framework;\
+            \ \\\n    else \\\n        pip install -e ${ADDONS_DIR}/OpenUpgrade/openupgrade_framework;\
+            \ \\\n    fi; \\\n    if [ \"$ver\" -ge 16 ]; then \\\n        pip install\
+            \ -e ${ADDONS_DIR}/OpenUpgrade/openupgrade_scripts; \\\n    fi; \\\n \
+            \   fi\n\n\n# Set default user when running the container\nUSER odoo"
+          variable_ids:
+          - reference: dockerfile_location
+          - access_level: manager
+            reference: install_python_packages
+            name: Install Extra Python Packages
+            variable_type: o
+            option_ids:
+            - access_level: manager
+              reference: install_python_packages_variable_option_2
+              sequence: 10
+              name: 'No'
+              value_char: 'no'
+            - access_level: manager
+              reference: install_python_packages_variable_option_1
+              sequence: 10
+              name: 'Yes'
+              value_char: 'yes'
+            applied_expression: false
+            validation_pattern: false
+            validation_message: false
+            note: If extra Python packages should be installed during the build.
+          - reference: odoo_edition
+          - reference: odoo_version
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: overwrite
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hosting_with_dns_plan_line_1_2
+      sequence: 24
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: upload_extra_python_packages_list
+        name: Upload extra python packages list
+        action: file_using_template
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: docker
+        path: false
+        file_template_id:
+          reference: extra_python_packages
+          name: Extra Python packages
+          source: tower
+          file_type: text
+          server_dir: '{{ dockerfile_location }}'
+          file_name: extra-packages.txt
+          keep_when_deleted: false
+          tag_ids:
+          - reference: docker
+          note: |-
+            Put extra Python packages that will be installed prior to the addon installation.
+            Hint: you can install Odoo addons as well using the `odoo-addon-addon_name` syntax.
+          code: '# Put package list here'
+          variable_ids:
+          - reference: dockerfile_location
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: true
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_10
+      sequence: 25
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: create_addons_list
+        name: Create addons list
+        action: file_using_template
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: docker
+        - reference: odoo
+        path: false
+        file_template_id:
+          reference: extra_addons_repo_list
+          name: Extra addons repo list
+          source: tower
+          file_type: text
+          server_dir: '{{ dockerfile_location }}'
+          file_name: addons.yml
+          keep_when_deleted: false
+          note: Uses Git Aggregator for cloning addons repo
+          code: |
+            # This file is generated with Cetmix Tower https://cetmix.com/tower
+            # It's designed to be used with git-aggregator tool developed by Acsone.
+            # Documentation for git-aggregator: https://github.com/acsone/git-aggregator
+
+            ./basic_project_for_new_servers_git_source_1:
+              remotes:
+                remote_1: https://github.com/OCA/web.git
+              merges:
+              - remote: remote_1
+                ref: '{{ odoo_version }}'
+              target: remote_1
+              defaults:
+                depth: 1
+          variable_ids:
+          - reference: dockerfile_location
+          - reference: odoo_version
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: overwrite
+        disconnect_file: true
+      git_project_id:
+        reference: basic_project_for_new_servers
+        name: Basic project for new servers
+        note: false
+        source_ids:
+        - reference: basic_project_for_new_servers_git_source_1
+          name: OCA Web
+          enabled: true
+          sequence: 10
+          remote_ids:
+          - reference: basic_project_for_new_servers_git_source_1_git_remote_1
+            name: remote_1
+            enabled: true
+            sequence: 10
+            repo_id:
+              reference: githubcomocaweb
+              url: https://github.com/OCA/web.git
+              is_private: false
+            head: '{{ odoo_version }}'
+            head_type: branch
+        git_aggregator_root_dir: false
+      is_make_copy: true
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_11
+      sequence: 26
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_recreate_odoo_container
+        name: Recreate Odoo container
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: docker
+        - reference: odoo
+        path: false
+        flight_plan_id:
+          reference: build_odoo_container
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_1_4
+      sequence: 27
+      condition: false
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: set_server_url
+        name: Set server URL
+        action: python_code
+        allow_parallel_run: false
+        note: |-
+          This is a temporary solution that sets server URL from variable.
+          Will be not needed as soon as we have a server setting for that.
+        tag_ids:
+        - reference: system
+        path: false
+        code: |
+          instance_url = {{ instance_url }}
+          ipv4 = {{ tower.server.ipv4 }}
+          ipv6 = {{ tower.server.ipv6 }}
+          odoo_port = {{ odoo_port }} or "8069"
+
+          if instance_url:
+            if "http" or "https" in instance_url:
+              instance_url = instance_url and instance_url.replace("_","-").replace(" ", "").strip().lower()
+            else:
+              # Add the https prefix
+              instance_url = "https://" + instance_url and instance_url.replace("_","-").replace(" ", "").strip().lower()
+          elif ipv4:
+            instance_url = ipv4 + ":" + odoo_port
+          elif ipv6:
+            instance_url = ipv6 + ":" + odoo_port
+          else:
+            instance_url = None
+          server.write({"url": instance_url})
+        server_status: false
+        variable_ids:
+        - reference: instance_url
+        - reference: odoo_port
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_12
+      sequence: 28
+      condition: '{{ instance_url }}'
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_prepare_for_nginx_with_certbot
+        name: Prepare for Nginx with Certbot
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: install
+        - reference: nginx
+        path: false
+        flight_plan_id:
+          access_level: manager
+          reference: prepare_nginx_with_certbot
+          name: Prepare Nginx with Certbot
+          allow_parallel_run: false
+          color: 0
+          tag_ids:
+          - reference: install
+          - reference: nginx
+          - reference: certbot
+            name: Certbot
+            color: 11
+          note: Creates shared Nginx configuration, uploads Odoo nginx configuration
+            file
+          on_error_action: e
+          custom_exit_code: 0
+          line_ids:
+          - reference: install_nginx_with_certbot_plan_line_1
+            sequence: 10
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: create_shared_nginx_directories
+              name: Create shared Nginx directories
+              action: ssh_command
+              allow_parallel_run: false
+              note: false
+              tag_ids:
+              - reference: install
+              - reference: nginx
+              path: false
+              code: 'mkdir -p {{ nginx_shared_secret_location }} && mkdir -p {{ nginx_shared_config_location
+                }} '
+              server_status: false
+              variable_ids:
+              - access_level: manager
+                reference: nginx_shared_secret_location
+                name: Shared Nginx secret location
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+                validation_message: false
+                note: Root certificate storage location for shared nginx container
+              - access_level: manager
+                reference: nginx_shared_config_location
+                name: Shared Nginx site configurations
+                variable_type: s
+                applied_expression: false
+                validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+                validation_message: false
+                note: Nginx website configuration files location
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+          - reference: install_nginx_with_certbot_plan_line_2
+            sequence: 11
+            condition: '{{ instance_url }}'
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: upload_odoo_nginx_configuration
+              name: Upload Odoo shared Nginx configuration
+              action: file_using_template
+              allow_parallel_run: false
+              note: false
+              path: false
+              file_template_id:
+                reference: shared_nginx
+                name: Shared Nginx
+                source: tower
+                file_type: text
+                server_dir: '{{ nginx_shared_config_location }}'
+                file_name: '{{ instance_url }}.conf'
+                keep_when_deleted: false
+                tag_ids:
+                - reference: odoo
+                - reference: nginx
+                note: |
+                  Configuration for Nginx+certbot running inside the container.
+                code: "upstream {{ odoo_container_name }}-odoo {\n  server {{ odoo_container_name\
+                  \ }}:{% if odoo_port %}{{ odoo_port }}{% else %}8069{% endif %};\n\
+                  }\n{% if (odoo_gevent_port and odoo_gevent_port != '0') or (odoo_longpolling_port\
+                  \ and odoo_longpolling_port != '0') and odoo_workers and odoo_workers\
+                  \ != '0'  %}\nupstream {{ odoo_container_name }}-odoochat {\n  server\
+                  \ {{ odoo_container_name }}:{{ odoo_longpolling_port or odoo_gevent_port\
+                  \ }};\n}\n{% endif %}\nmap $http_upgrade $connection_upgrade {\n\
+                  \  default upgrade;\n  ''      close;\n}\n\n# http -> https\nserver\
+                  \ {\n  listen 80;\n  server_name {{ instance_url }};\n  rewrite\
+                  \ ^(.*) https://$host$1 permanent;\n}\n\nserver {\n  listen 443\
+                  \ ssl;\n  server_name {{ instance_url }};\n  proxy_read_timeout\
+                  \ 720s;\n  proxy_connect_timeout 720s;\n  proxy_send_timeout 720s;\n\
+                  \n  # Max upload size\n  client_max_body_size 2048M;\n\n  # Add\
+                  \ Headers for odoo proxy mode\n  proxy_set_header X-Forwarded-Host\
+                  \ $host;\n  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n\
+                  \  proxy_set_header X-Forwarded-Proto $scheme;\n  proxy_set_header\
+                  \ X-Real-IP $remote_addr;\n\n  {% if nginx_prevent_website_index=='yes'\
+                  \ %}\n  # Add header to tell bots not to index\n  add_header X-Robots-Tag\
+                  \ \"noindex, nofollow\" always;\n  {% endif %}\n  \n  # SSL parameters\n\
+                  \  ssl_certificate         /etc/letsencrypt/live/{{ instance_url}}/fullchain.pem;\n\
+                  \  ssl_certificate_key     /etc/letsencrypt/live/{{ instance_url}}/privkey.pem;\n\
+                  \  ssl_trusted_certificate /etc/letsencrypt/live/{{ instance_url}}/chain.pem;\n\
+                  \n  # Load the Diffie-Hellman parameter.\n  ssl_dhparam /etc/letsencrypt/dhparams/dhparam.pem;\n\
+                  \n  ssl_session_timeout 30m;\n  \n  {% if nginx_block_odoo_debug_mode\
+                  \ == \"yes\" %}\n    # Block debug mode URLs\n    if ($args ~ debug)\
+                  \ {\n      return 403;\n    }\n  {% endif %}\n  \n  # log\n  access_log\
+                  \ /var/log/nginx/{{ instance_url }}.access.log;\n  error_log /var/log/nginx/{{\
+                  \ instance_url }}.error.log;\n\n{% if (odoo_gevent_port and odoo_gevent_port\
+                  \ != '0') or (odoo_longpolling_port and odoo_longpolling_port !=\
+                  \ '0') and odoo_workers and odoo_workers != '0'  %}\n  # Redirect\
+                  \ websocket/longpolling requests to odoo gevent/longpolling port\n\
+                  \  location {% if odoo_version in [\"8.0\", \"9.0\", \"10.0\", \"\
+                  11.0\", \"12.0\", \"13.0\", \"14.0\", \"15.0\"] %}/longpolling{%\
+                  \ else %}/websocket{%endif%} {\n    proxy_pass http://{{ odoo_container_name\
+                  \ }}-odoochat;\n    proxy_set_header Upgrade $http_upgrade;\n  \
+                  \  proxy_set_header Connection $connection_upgrade;\n    proxy_set_header\
+                  \ X-Forwarded-Host $host;\n    proxy_set_header X-Forwarded-For\
+                  \ $proxy_add_x_forwarded_for;\n    proxy_set_header X-Forwarded-Proto\
+                  \ $scheme;\n    proxy_set_header X-Real-IP $remote_addr;\n  }\n\
+                  {% endif %}\n\n  # Redirect Certbot requests\n  location ^~ /.well-known/acme-challenge/\
+                  \ {\n    root /var/www/letsencrypt;\n    default_type \"text/plain\"\
+                  ;\n    try_files $uri =404;\n  }\n  \n  # Redirect requests to odoo\
+                  \ backend server\n  location / {\n    proxy_redirect off;\n    proxy_pass\
+                  \ http://{{ odoo_container_name }}-odoo;\n  }\n\n  # common gzip\n\
+                  \  gzip_types text/css text/scss text/plain text/xml application/xml\
+                  \ application/json application/javascript;\n  gzip on;\n}\n"
+                variable_ids:
+                - reference: instance_url
+                - reference: nginx_block_odoo_debug_mode
+                - reference: nginx_prevent_website_index
+                - reference: odoo_container_name
+                - reference: odoo_gevent_port
+                - reference: odoo_longpolling_port
+                - reference: odoo_port
+                - reference: odoo_version
+                - reference: odoo_workers
+                - reference: nginx_shared_config_location
+              code: false
+              server_status: false
+              no_split_for_sudo: false
+              if_file_exists: overwrite
+              disconnect_file: false
+            variable_ids:
+            - reference: instance_url
+            is_make_copy: false
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      variable_ids:
+      - reference: instance_url
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_1_6
+      sequence: 29
+      condition: '{{ instance_url }} and {{ dns_provider }} == "cloudflare"'
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: register_dns_record_on_cloudflare
+        name: Register DNS record on Cloudflare
+        action: python_code
+        allow_parallel_run: false
+        note: Register new DNS record on Cloudflare
+        tag_ids:
+        - reference: dns
+          name: DNS
+          color: 3
+        - reference: cloudflare
+          name: Cloudflare
+          color: 2
+        path: false
+        code: |-
+          # ----------------
+          # Tower properties
+          # ----------------
+
+          # Ensure your domain matches your DNS Zone!
+          instance_url = {{ tower.server.url }}
+          cloudflare_zone_id = #!cxtower.secret.cloudflare_zone_id!#
+          cloudflare_token = #!cxtower.secret.cloudflare_token!#
+          request_timeout = 15 # increase in case of unstable network connection
+
+          # ----------------
+          # Request settings
+          # ----------------
+
+
+          url = "https://api.cloudflare.com/client/v4/zones/"+cloudflare_zone_id+"/dns_records"
+          payload = {
+              "comment": "Added with Cetmix Tower",
+              "name": instance_url,
+              "proxied": False,
+              "settings": {},
+              "tags": [],
+              "ttl": 3600,
+              "content": {{ tower.server.ipv4 }},
+              "type": "A"
+          }
+          headers = {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer "+cloudflare_token,
+          }
+
+          # Send request to Cloudflare
+          response = requests.post(url, json=payload, headers=headers, timeout=request_timeout)
+
+          # Default Tower success exit code is 0. However requests success code is 200.
+          # Following code convers requests success code into the Tower one
+          if response.status_code == 200:
+            exit_code = 0
+          else:
+            exit_code = response.status_code
+
+          result = {
+              "exit_code": exit_code,
+              "message": response.text,
+          }
+        server_status: false
+        secret_ids:
+        - reference: cloudflare_token
+        - reference: cloudflare_zone_id
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      variable_ids:
+      - reference: dns_provider
+      - reference: instance_url
+      is_make_copy: false
+    - reference: odoo_on_hetzner_with_cloudflare_plan_line_13
+      sequence: 30
+      condition: '{{ instance_url }}'
+      use_sudo: false
+      path: false
+      command_id:
+        access_level: manager
+        reference: plan_recreate_nginx_container
+        name: Recreate Nginx container
+        action: plan
+        allow_parallel_run: false
+        note: false
+        tag_ids:
+        - reference: nginx
+        path: false
+        flight_plan_id:
+          access_level: manager
+          reference: recreate_shared_nginx_container
+          name: Recreate shared Nginx container
+          allow_parallel_run: false
+          color: 0
+          tag_ids:
+          - reference: docker
+          - reference: nginx
+          note: false
+          on_error_action: e
+          custom_exit_code: 0
+          line_ids:
+          - reference: stop_shared_nginx
+            sequence: 10
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: stop_shared_nginx
+              name: Stop shared Nginx
+              action: ssh_command
+              allow_parallel_run: false
+              note: false
+              tag_ids:
+              - reference: docker
+              - reference: nginx
+              path: false
+              code: docker stop {{ nginx_shared_container_name }}
+              server_status: false
+              variable_ids:
+              - reference: nginx_shared_container_name
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            action_ids:
+            - reference: if_exit_code__0_then_run_next_command_33
+              sequence: 10
+              condition: '!='
+              value_char: '0'
+              action: n
+              custom_exit_code: 0
+            is_make_copy: false
+          - reference: remove_shared_nginx
+            sequence: 11
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: remove_shared_nginx
+              name: Remove shared Nginx
+              action: ssh_command
+              allow_parallel_run: false
+              note: false
+              tag_ids:
+              - reference: docker
+              - reference: nginx
+              path: false
+              code: docker rm {{ nginx_shared_container_name }}
+              server_status: false
+              variable_ids:
+              - reference: nginx_shared_container_name
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            action_ids:
+            - reference: if_exit_code__0_then_run_next_command_34
+              sequence: 10
+              condition: '!='
+              value_char: '0'
+              action: n
+              custom_exit_code: 0
+            is_make_copy: false
+          - reference: run_shared_nginx_with_certbot
+            sequence: 12
+            condition: false
+            use_sudo: false
+            path: false
+            command_id:
+              access_level: manager
+              reference: run_shared_nginx_with_certbot
+              name: Run shared Nginx with Certbot
+              action: ssh_command
+              allow_parallel_run: false
+              note: false
+              tag_ids:
+              - reference: docker
+              - reference: nginx
+              path: false
+              code: |
+                docker run -d -e CERTBOT_EMAIL={{ instance_certbot_email }} \
+                    --restart always \
+                {% if  tower_docker_network %}
+                    --network={{ tower_docker_network }} \
+                {% endif %}
+                    -v {{ nginx_shared_secret_location }}:/etc/letsencrypt  \
+                    -v {{ nginx_shared_config_location }}:/etc/nginx/user_conf.d:ro  \
+                    -p 80:80 \
+                    -p 443:443 \
+                    --name {{ nginx_shared_container_name }} jonasal/nginx-certbot:latest
+              server_status: false
+              variable_ids:
+              - reference: instance_certbot_email
+              - reference: nginx_shared_container_name
+              - reference: nginx_shared_secret_location
+              - reference: nginx_shared_config_location
+              - reference: tower_docker_network
+              no_split_for_sudo: false
+              if_file_exists: skip
+              disconnect_file: false
+            is_make_copy: false
+        code: false
+        server_status: false
+        no_split_for_sudo: false
+        if_file_exists: skip
+        disconnect_file: false
+      variable_ids:
+      - reference: instance_url
+      is_make_copy: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_image_repo
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_image_repo
+    name: docker_image_repo
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: false
+  value_char: cetmix
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_logs_time_variable_value_1_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_logs_time
+    name: Docker Logs Time
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Will show logs for the last time frame defined by this parameter.
+      docker show logs --from==
+  value_char: 5m
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_odoo_gid_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_odoo_gid
+    name: Odoo Docker GID
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Default group id of the \"odoo\" group inside the Docker container. \n\"\
+      101\" is used by the official Odoo images, however you should pick other one\
+      \ in case it raises conflicts with other existing groups."
+  value_char: '101'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_odoo_uid
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_odoo_uid
+    name: Odoo Docker UID
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Default user id of the \"odoo\" user inside the Docker container. \n\"\
+      101\" is used by the official Odoo images, however you should pick other one\
+      \ in case it raises conflicts with other existing users."
+  value_char: '101'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: dockerfile_location_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: dockerfile_location
+    name: Odoo Dockerfile location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo Dockerfile is located
+  value_char: '{{ instance_root }}/docker'
+  variable_ids:
+  - access_level: manager
+    reference: instance_root
+    name: Instance Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: Must be a valid path. Can include variables.
+    note: Root location of the instance files.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: instance_root
+  sequence: 10
+  variable_id:
+    reference: instance_root
+  value_char: '{{ odoo_root }}/{{ instance_name }}'
+  variable_ids:
+  - access_level: manager
+    reference: instance_name
+    name: Instance Name
+    variable_type: s
+    applied_expression: result = value.lower().strip().replace(" ","")
+    validation_pattern: ^(?!\s)(?:(?!\/)[A-Za-z0-9._-]|{{\s*[A-Za-z_][A-Za-z0-9_]*\s*}})+(?!\s)$
+    validation_message: Must comply with the UNIX directory naming standards!
+    note: |-
+      This is a technical name of the instance which is used for creating the directory structure.
+      It can be also used for the URL creation, so you should avoid using non URL friendly symbols.
+  - access_level: manager
+    reference: odoo_root
+    name: Odoo Root Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo instances files are created and stored.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_dockerfile_official_location
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_base_dockerfile_temp_dir
+    name: Base Odoo Image Download Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: |-
+      Temporary directory where the base Odoo image repo will be downloaded.
+      This directory will be created automatically.
+      Usually such directory is located in "/tmp", eg "/tmp/base-odoo-image-repo"
+      Important! Do NOT use existing directories, because flight plan will delete it after execution.
+  value_char: /tmp/base-odoo-image-repo
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_dockerfile_official_release
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_dockerfile_official_release
+    name: Odoo Dockerfile Official Release
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Release version of the Odoo official image
+  value_char: latest
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_image_name_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_image_name
+    name: Odoo Image Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Name of the final Odoo image
+  value_char: '{{ instance_name}}:{{ odoo_version }}'
+  variable_ids:
+  - reference: instance_name
+  - access_level: manager
+    reference: odoo_version
+    name: Odoo Version
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: odoo_version_variable_option_8
+      sequence: 10
+      name: '18.0'
+      value_char: '18.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_7
+      sequence: 11
+      name: '17.0'
+      value_char: '17.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_6
+      sequence: 12
+      name: '16.0'
+      value_char: '16.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_5
+      sequence: 13
+      name: '15.0'
+      value_char: '15.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_4
+      sequence: 14
+      name: '14.0'
+      value_char: '14.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_3
+      sequence: 15
+      name: '13.0'
+      value_char: '13.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_2
+      sequence: 16
+      name: '12.0'
+      value_char: '12.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_1
+      sequence: 17
+      name: '11.0'
+      value_char: '11.0'
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Odoo version
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_root
+  sequence: 10
+  variable_id:
+    reference: odoo_root
+  value_char: '{{ tower_root }}/odoo'
+  variable_ids:
+  - access_level: manager
+    reference: tower_root
+    name: Tower Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root location of all Cetmix Tower files
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_root_variable_value_1
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_root
+    name: Postgres Root Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Postgres files are stored.
+  value_char: '{{ tower_root }}/postgres'
+  variable_ids:
+  - reference: tower_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_nginx_root_location_variable_value_1
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_nginx_root_location
+    name: Shared Nginx root location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: false
+  value_char: '{{ tower_root }}/nginx.root'
+  variable_ids:
+  - reference: tower_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: tower_root_4
+  sequence: 10
+  variable_id:
+    reference: tower_root
+  value_char: '{% if tower.server.username == ''root'' %}/opt/tower{% else %}/home/{{
+    tower.server.username }}{% endif %}'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_password
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_password
+    name: Postgres Password
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      This password will be used to connect to Postgres server.
+      Use passwords in variables ONLY for testing without real data.
+      Otherwise use secrets ALWAYS!
+  value_char: odoo
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_root_variable_value_1
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_root
+    name: Postgres Root Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Postgres files are stored.
+  value_char: '{{ tower_root }}/postgres'
+  variable_ids:
+  - access_level: manager
+    reference: tower_root
+    name: Tower Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root location of all Cetmix Tower files
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_shm_size_3
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_shm_size
+    name: Postgres Shared Memory Size
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Refers to the amount of shared memory allocated to PostgreSQL, especially\
+      \ when running PostgreSQL inside a Docker container. It\u2019s particularly\
+      \ important for features like parallel queries, in-memory operations, and performance\
+      \ tuning.\nDefault is too low (64MB).\nFor production, at least 256MB or 512MB\
+      \ is often recommended.\nFor workloads with high concurrency or parallel queries,\
+      \ 1GB+ may help."
+  value_char: 1GB
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_user
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_user
+    name: Postgres User
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: This user will be used to connect to Postgres server
+  value_char: odoo
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_version_6
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_version
+    name: Postgres Version
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: postgres_version_variable_option_1
+      sequence: 10
+      name: '9.6'
+      value_char: '9.6'
+    - access_level: manager
+      reference: postgres_version_variable_option_2
+      sequence: 11
+      name: '13'
+      value_char: '13'
+    - access_level: manager
+      reference: postgres_version_variable_option_3
+      sequence: 12
+      name: '14'
+      value_char: '14'
+    - access_level: manager
+      reference: postgres_version_variable_option_4
+      sequence: 13
+      name: '15'
+      value_char: '15'
+    - access_level: manager
+      reference: postgres_version_variable_option_5
+      sequence: 14
+      name: '16'
+      value_char: '16'
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Postgres version. Pick the latest one supported by your app.
+  value_char: '14'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_postgres_data_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_postgres_data
+    name: Shared Posggres Data
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Shared Postgres container data location
+  value_char: '{{ postgres_root }}/shared_postgres_data'
+  variable_ids:
+  - reference: postgres_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_postgres_name
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_postgres_name
+    name: Shared Postgres Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Shared Postgres container name.
+      This container is typically used by all instances running on the server.
+  value_char: db-shared
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_postgres_restart_policy
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_postgres_restart_policy
+    name: Shared Postgres Restart Policy
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: shared_postgres_restart_policy_variable_option_1
+      sequence: 10
+      name: Do not restart
+      value_char: 'no'
+    - access_level: manager
+      reference: shared_postgres_restart_policy_variable_option_2
+      sequence: 11
+      name: Restart if it was running
+      value_char: unless-stopped
+    - access_level: manager
+      reference: shared_postgres_restart_policy_variable_option_3
+      sequence: 12
+      name: Always restart
+      value_char: always
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Restart policy of the shared Postgres container.
+      Tells Docker what to do with the container after the host system was restarted.
+  value_char: always
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_data_3
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_data
+    name: Odoo Filestore Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo data files are stored
+  value_char: '{{ instance_root }}/data'
+  variable_ids:
+  - access_level: manager
+    reference: instance_root
+    name: Instance Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: Must be a valid path. Can include variables.
+    note: Root location of the instance files.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: nginx_shared_config_location
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: nginx_shared_config_location
+    name: Shared Nginx site configurations
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Nginx website configuration files location
+  value_char: '{{ tower_root }}/nginx.conf.d'
+  variable_ids:
+  - access_level: manager
+    reference: tower_root
+    name: Tower Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root location of all Cetmix Tower files
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: nginx_shared_secret_location
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: nginx_shared_secret_location
+    name: Shared Nginx secret location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root certificate storage location for shared nginx container
+  value_char: '{{ tower_root }}/nginx.secrets'
+  variable_ids:
+  - reference: tower_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: pgdata
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: pgdata
+    name: PGDATA
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Specifies the data directory location within the Postgres container.
+      Do not modify unless really needed
+  value_char: /var/lib/postgresql/data
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_container_name_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_container_name
+    name: Odoo Container Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: Name of the Odoo Docker container
+  value_char: '{{ instance_name }}-odoo'
+  variable_ids:
+  - access_level: manager
+    reference: instance_name
+    name: Instance Name
+    variable_type: s
+    applied_expression: result = value.lower().strip().replace(" ","")
+    validation_pattern: ^(?!\s)(?:(?!\/)[A-Za-z0-9._-]|{{\s*[A-Za-z_][A-Za-z0-9_]*\s*}})+(?!\s)$
+    validation_message: Must comply with the UNIX directory naming standards!
+    note: |-
+      This is a technical name of the instance which is used for creating the directory structure.
+      It can be also used for the URL creation, so you should avoid using non URL friendly symbols.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: nginx_shared_container_name
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: nginx_shared_container_name
+    name: Shared Nginx container name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Name of the shared nginx with certbot container.
+      This container is used as a reverse proxy for Odoo.
+  value_char: nginx-shared
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_restart_policy
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_restart_policy
+    name: Odoo Container Restart Policy
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: odoo_restart_policy_variable_option_1
+      sequence: 10
+      name: Do not restart
+      value_char: 'no'
+    - access_level: manager
+      reference: odoo_restart_policy_variable_option_2
+      sequence: 11
+      name: Restart if it was running
+      value_char: unless-stopped
+    - access_level: manager
+      reference: odoo_restart_policy_variable_option_3
+      sequence: 12
+      name: Always restart
+      value_char: always
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Restart policy of the Odoo Docker container.
+      Tells Docker what to do with the container after the host system was restarted.
+  value_char: always
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: instance_certbot_email
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: instance_certbot_email
+    name: Certbot Email for Instance
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9._%+-]+|{{[^{}]+}})(?:@(?:[a-z0-9.-]+\.[a-z]{2,}|{{[^{}]+}})|)(?:{%\s*(if|else|endif)\b[^%]*?%\})*$
+    validation_message: false
+    note: Used for certbot installation
+  value_char: certbot@yourdomain.example.com
+  required: false

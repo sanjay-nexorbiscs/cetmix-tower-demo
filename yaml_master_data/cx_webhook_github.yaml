@@ -1,0 +1,70 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: GitHub Events
+  summary: GitHub Event Management
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com
+  license: agpl-3
+records:
+- cetmix_tower_model: webhook
+  reference: github
+  name: GitHub Events
+  active: true
+  authenticator_id:
+    reference: github
+    name: Github
+    code: |+
+      # Please refer to the 'Help' tab and documentation for more information.
+      #
+      # You can return authenticator result in the 'result' variable which is a dictionary:
+      #   result = {"allowed": <bool, mandatory, default=False>, "http_code": <int, optional>, "message": <str, optional>}
+      #   default value is {"allowed": False}
+
+      token=#!cxtower.secret.github_webhook_secret!#
+      signature = headers.get('X-Hub-Signature-256')
+      expected_signature = 'sha256=' + hmac.new(token.encode(), raw_data, hashlib.sha256).hexdigest()
+      if hmac.compare_digest(expected_signature, signature):
+        result = {"allowed": True, "message": "Ciao!"}
+
+    allowed_ip_addresses: false
+    trusted_proxy_ips: false
+    secret_ids:
+    - reference: github_webhook_secret
+      name: Github Webhook Secret
+      key_type: s
+      note: false
+  endpoint: github
+  method: post
+  code: "# Supported events\nsupported_events = [\"pull_request\"]\n\n# Task obj\n\
+    TasksObj = env[\"project.task\"]\n\n# Task states. Map ids to names\ntask_stages\
+    \ = {\"Review\": 35}\n# Check event type\nevent_type = headers.get('X-Github-Event')\n\
+    if event_type not in supported_events:\n  result = {\"exit_code\": 404, \"message\"\
+    : event_type}\n\n# Event is supported\nelse:\n\n  # Check if the payload contains\
+    \ a pull_request key.\n  pr = payload.get('pull_request')\n  if pr:\n    # Search\
+    \ task by PR URI\n    tasks = TasksObj.search([(\"pr_uri\", \"=\", pr.get(\"html_url\"\
+    ))])\n\n    # Task is found\n    if tasks:\n      \n      # -------------------------\n\
+    \      # Actions based on PR state\n      # -------------------------\n      \n\
+    \      # Extract the pull request status (e.g., \"open\" or \"closed\").\n   \
+    \   pr_state = pr.get('state')\n      \n      # Check for merged and draft PRs\n\
+    \      if pr.get('merged'):\n        pr_state = \"merged\"\n      elif pr.get(\"\
+    draft\"):\n        pr_state = \"draft\"\n        \n      # Extract all label names\
+    \ from the pull request.\n      labels = [label.get('name') for label in pr.get('labels',\
+    \ [])]\n      \n      for task in tasks:\n        # Will update all at once\n\
+    \        new_task_vals = {}\n        # Update task status\n        if task.pr_state\
+    \ != pr_state:\n          task.write({\"pr_state\": pr_state})\n        \n   \
+    \     # -----------------------\n        # Actions based on labels\n        #\
+    \ -----------------------\n        \n        # -- Approved -> \"Ready for next\
+    \ stage\" if task is in \"Review\"\n        \n        task_in_review = task.stage_id\
+    \ and task.stage_id.id == task_stages.get(\"Review\")\n        if \"approved\"\
+    \ in labels:\n          if task.kanban_state != \"done\" and task_in_review:\n\
+    \            new_task_vals.update({\"kanban_state\": \"done\"})\n        else:\n\
+    \          if task.kanban_state == \"done\":\n            new_task_vals.update({\"\
+    kanban_state\": \"normal\"})\n          \n        # ----------------------\n \
+    \       # Update task with vals\n        # ----------------------\n        if\
+    \ new_task_vals:\n          task.write(new_task_vals)\n\n      "
+  content_type: json

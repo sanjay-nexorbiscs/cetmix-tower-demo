@@ -1,0 +1,36 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: GitHub Authenticator
+  summary: Authenticator for GitHub
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com/contactus
+  license: agpl-3
+records:
+- cetmix_tower_model: webhook_authenticator
+  reference: github
+  name: Github
+  code: |+
+    # Please refer to the 'Help' tab and documentation for more information.
+    #
+    # You can return authenticator result in the 'result' variable which is a dictionary:
+    #   result = {"allowed": <bool, mandatory, default=False>, "http_code": <int, optional>, "message": <str, optional>}
+    #   default value is {"allowed": False}
+
+    token=#!cxtower.secret.github_webhook_secret!#
+    signature = headers.get('X-Hub-Signature-256')
+    expected_signature = 'sha256=' + hmac.new(token.encode(), raw_data, hashlib.sha256).hexdigest()
+    if hmac.compare_digest(expected_signature, signature):
+      result = {"allowed": True, "message": "Ciao!"}
+
+  allowed_ip_addresses: false
+  trusted_proxy_ips: false
+  secret_ids:
+  - reference: github_webhook_secret
+    name: Github Webhook Secret
+    key_type: s
+    note: false

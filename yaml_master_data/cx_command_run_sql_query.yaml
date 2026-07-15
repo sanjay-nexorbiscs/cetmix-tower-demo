@@ -1,0 +1,78 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Run SQL Query
+  summary: Run an SQL query in the shared Postgres docker container
+  description: Put your query in the "SQL Query" configuration variable value in the
+    command run wizard.
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.0
+  website: https://cetmix.com
+  license: AGPL-3
+records:
+- cetmix_tower_model: command
+  access_level: manager
+  reference: run_sql_query
+  name: Run SQL query
+  action: ssh_command
+  allow_parallel_run: false
+  note: Run an SQL query in the shared Postgres docker container
+  tag_ids:
+  - reference: postgres
+    name: Postgres
+    color: 8
+  - reference: sql
+    name: SQL
+    color: 3
+  path: false
+  code: docker exec -e PGPASSWORD=#!cxtower.secret.postgres_password!#  {{ shared_postgres_name
+    }} psql -U {{ postgres_user }} -d {{ odoo_db_name }} -c "{{ postgres_sql_command
+    }}"
+  server_status: false
+  variable_ids:
+  - access_level: manager
+    reference: odoo_db_name
+    name: Odoo DB name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Odoo database name. \nIf provided, Odoo will run in the single-db mode,\
+      \ with all requests being redirected to this database."
+  - access_level: manager
+    reference: postgres_user
+    name: Postgres User
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: This user will be used to connect to Postgres server
+  - access_level: manager
+    reference: postgres_sql_command
+    name: SQL Query
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: false
+  - access_level: manager
+    reference: shared_postgres_name
+    name: Shared Postgres Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Shared Postgres container name.
+      This container is typically used by all instances running on the server.
+  secret_ids:
+  - reference: postgres_password
+    name: Postgres Password
+    key_type: s
+    note: Password used to connect to Postgres server
+  no_split_for_sudo: true
+  if_file_exists: skip
+  disconnect_file: false

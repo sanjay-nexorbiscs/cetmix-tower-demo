@@ -1,0 +1,648 @@
+
+# This file is generated with Cetmix Tower.
+# Details and documentation: https://cetmix.com/tower
+cetmix_tower_yaml_version: 1
+manifest:
+  name: Global Variable Values
+  summary: Pre-defined global variable values
+  author:
+  - "Cetmix O\xDC"
+  version: 1.0.1
+  website: https://cetmix.com/contactus
+  license: AGPL-3
+records:
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_image_repo
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_image_repo
+    name: docker_image_repo
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: false
+  value_char: cetmix
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_logs_time_variable_value_1_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_logs_time
+    name: Docker Logs Time
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Will show logs for the last time frame defined by this parameter.
+      docker show logs --from==
+  value_char: 5m
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_odoo_gid_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_odoo_gid
+    name: Odoo Docker GID
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Default group id of the \"odoo\" group inside the Docker container. \n\"\
+      101\" is used by the official Odoo images, however you should pick other one\
+      \ in case it raises conflicts with other existing groups."
+  value_char: '101'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: docker_odoo_uid
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: docker_odoo_uid
+    name: Odoo Docker UID
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Default user id of the \"odoo\" user inside the Docker container. \n\"\
+      101\" is used by the official Odoo images, however you should pick other one\
+      \ in case it raises conflicts with other existing users."
+  value_char: '101'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: dockerfile_location_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: dockerfile_location
+    name: Odoo Dockerfile location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo Dockerfile is located
+  value_char: '{{ instance_root }}/docker'
+  variable_ids:
+  - access_level: manager
+    reference: instance_root
+    name: Instance Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: Must be a valid path. Can include variables.
+    note: Root location of the instance files.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: instance_root
+  sequence: 10
+  variable_id:
+    reference: instance_root
+  value_char: '{{ odoo_root }}/{{ instance_name }}'
+  variable_ids:
+  - access_level: manager
+    reference: instance_name
+    name: Instance Name
+    variable_type: s
+    applied_expression: result = value.lower().strip().replace(" ","")
+    validation_pattern: ^(?!\s)(?:(?!\/)[A-Za-z0-9._-]|{{\s*[A-Za-z_][A-Za-z0-9_]*\s*}})+(?!\s)$
+    validation_message: Must comply with the UNIX directory naming standards!
+    note: |-
+      This is a technical name of the instance which is used for creating the directory structure.
+      It can be also used for the URL creation, so you should avoid using non URL friendly symbols.
+  - access_level: manager
+    reference: odoo_root
+    name: Odoo Root Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo instances files are created and stored.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_dockerfile_official_location
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_base_dockerfile_temp_dir
+    name: Base Odoo Image Download Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: |-
+      Temporary directory where the base Odoo image repo will be downloaded.
+      This directory will be created automatically.
+      Usually such directory is located in "/tmp", eg "/tmp/base-odoo-image-repo"
+      Important! Do NOT use existing directories, because flight plan will delete it after execution.
+  value_char: /tmp/base-odoo-image-repo
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_dockerfile_official_release
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_dockerfile_official_release
+    name: Odoo Dockerfile Official Release
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Release version of the Odoo official image
+  value_char: latest
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_image_name_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_image_name
+    name: Odoo Image Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Name of the final Odoo image
+  value_char: '{{ instance_name}}:{{ odoo_version }}'
+  variable_ids:
+  - reference: instance_name
+  - access_level: manager
+    reference: odoo_version
+    name: Odoo Version
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: odoo_version_variable_option_8
+      sequence: 10
+      name: '18.0'
+      value_char: '18.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_7
+      sequence: 11
+      name: '17.0'
+      value_char: '17.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_6
+      sequence: 12
+      name: '16.0'
+      value_char: '16.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_5
+      sequence: 13
+      name: '15.0'
+      value_char: '15.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_4
+      sequence: 14
+      name: '14.0'
+      value_char: '14.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_3
+      sequence: 15
+      name: '13.0'
+      value_char: '13.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_2
+      sequence: 16
+      name: '12.0'
+      value_char: '12.0'
+    - access_level: manager
+      reference: odoo_version_variable_option_1
+      sequence: 17
+      name: '11.0'
+      value_char: '11.0'
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Odoo version
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_root
+  sequence: 10
+  variable_id:
+    reference: odoo_root
+  value_char: '{{ tower_root }}/odoo'
+  variable_ids:
+  - access_level: manager
+    reference: tower_root
+    name: Tower Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root location of all Cetmix Tower files
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_root_variable_value_1
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_root
+    name: Postgres Root Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Postgres files are stored.
+  value_char: '{{ tower_root }}/postgres'
+  variable_ids:
+  - reference: tower_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_nginx_root_location_variable_value_1
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_nginx_root_location
+    name: Shared Nginx root location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: false
+  value_char: '{{ tower_root }}/nginx.root'
+  variable_ids:
+  - reference: tower_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: tower_root_4
+  sequence: 10
+  variable_id:
+    reference: tower_root
+  value_char: '{% if tower.server.username == ''root'' %}/opt/tower{% else %}/home/{{
+    tower.server.username }}{% endif %}'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_password
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_password
+    name: Postgres Password
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      This password will be used to connect to Postgres server.
+      Use passwords in variables ONLY for testing without real data.
+      Otherwise use secrets ALWAYS!
+  value_char: odoo
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_root_variable_value_1
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_root
+    name: Postgres Root Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Postgres files are stored.
+  value_char: '{{ tower_root }}/postgres'
+  variable_ids:
+  - access_level: manager
+    reference: tower_root
+    name: Tower Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root location of all Cetmix Tower files
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_shm_size_3
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_shm_size
+    name: Postgres Shared Memory Size
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: "Refers to the amount of shared memory allocated to PostgreSQL, especially\
+      \ when running PostgreSQL inside a Docker container. It\u2019s particularly\
+      \ important for features like parallel queries, in-memory operations, and performance\
+      \ tuning.\nDefault is too low (64MB).\nFor production, at least 256MB or 512MB\
+      \ is often recommended.\nFor workloads with high concurrency or parallel queries,\
+      \ 1GB+ may help."
+  value_char: 1GB
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_user
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_user
+    name: Postgres User
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: This user will be used to connect to Postgres server
+  value_char: odoo
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: postgres_version_6
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: postgres_version
+    name: Postgres Version
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: postgres_version_variable_option_1
+      sequence: 10
+      name: '9.6'
+      value_char: '9.6'
+    - access_level: manager
+      reference: postgres_version_variable_option_2
+      sequence: 11
+      name: '13'
+      value_char: '13'
+    - access_level: manager
+      reference: postgres_version_variable_option_3
+      sequence: 12
+      name: '14'
+      value_char: '14'
+    - access_level: manager
+      reference: postgres_version_variable_option_4
+      sequence: 13
+      name: '15'
+      value_char: '15'
+    - access_level: manager
+      reference: postgres_version_variable_option_5
+      sequence: 14
+      name: '16'
+      value_char: '16'
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Postgres version. Pick the latest one supported by your app.
+  value_char: '14'
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_postgres_data_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_postgres_data
+    name: Shared Posggres Data
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: Shared Postgres container data location
+  value_char: '{{ postgres_root }}/shared_postgres_data'
+  variable_ids:
+  - reference: postgres_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_postgres_name
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_postgres_name
+    name: Shared Postgres Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Shared Postgres container name.
+      This container is typically used by all instances running on the server.
+  value_char: db-shared
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: shared_postgres_restart_policy
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: shared_postgres_restart_policy
+    name: Shared Postgres Restart Policy
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: shared_postgres_restart_policy_variable_option_1
+      sequence: 10
+      name: Do not restart
+      value_char: 'no'
+    - access_level: manager
+      reference: shared_postgres_restart_policy_variable_option_2
+      sequence: 11
+      name: Restart if it was running
+      value_char: unless-stopped
+    - access_level: manager
+      reference: shared_postgres_restart_policy_variable_option_3
+      sequence: 12
+      name: Always restart
+      value_char: always
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Restart policy of the shared Postgres container.
+      Tells Docker what to do with the container after the host system was restarted.
+  value_char: always
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_data_3
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_data
+    name: Odoo Filestore Location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Where Odoo data files are stored
+  value_char: '{{ instance_root }}/data'
+  variable_ids:
+  - access_level: manager
+    reference: instance_root
+    name: Instance Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: Must be a valid path. Can include variables.
+    note: Root location of the instance files.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: nginx_shared_config_location
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: nginx_shared_config_location
+    name: Shared Nginx site configurations
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Nginx website configuration files location
+  value_char: '{{ tower_root }}/nginx.conf.d'
+  variable_ids:
+  - access_level: manager
+    reference: tower_root
+    name: Tower Root
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root location of all Cetmix Tower files
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: nginx_shared_secret_location
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: nginx_shared_secret_location
+    name: Shared Nginx secret location
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^((\/|^)([\w\-\.]*|\{\{[^{}]+\}\}|{%\s*(if|else|endif)\b[^%]*?%\})+)+$
+    validation_message: false
+    note: Root certificate storage location for shared nginx container
+  value_char: '{{ tower_root }}/nginx.secrets'
+  variable_ids:
+  - reference: tower_root
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: pgdata
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: pgdata
+    name: PGDATA
+    variable_type: s
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Specifies the data directory location within the Postgres container.
+      Do not modify unless really needed
+  value_char: /var/lib/postgresql/data
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_container_name_2
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_container_name
+    name: Odoo Container Name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: Name of the Odoo Docker container
+  value_char: '{{ instance_name }}-odoo'
+  variable_ids:
+  - access_level: manager
+    reference: instance_name
+    name: Instance Name
+    variable_type: s
+    applied_expression: result = value.lower().strip().replace(" ","")
+    validation_pattern: ^(?!\s)(?:(?!\/)[A-Za-z0-9._-]|{{\s*[A-Za-z_][A-Za-z0-9_]*\s*}})+(?!\s)$
+    validation_message: Must comply with the UNIX directory naming standards!
+    note: |-
+      This is a technical name of the instance which is used for creating the directory structure.
+      It can be also used for the URL creation, so you should avoid using non URL friendly symbols.
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: nginx_shared_container_name
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: nginx_shared_container_name
+    name: Shared Nginx container name
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9_.-]*\{\{[^{}]+\}\}[a-z0-9_.-]*|{%\s*(if|else|endif)\b[^%]*?%\}|[a-z0-9_.-]+)+$
+    validation_message: false
+    note: |-
+      Name of the shared nginx with certbot container.
+      This container is used as a reverse proxy for Odoo.
+  value_char: nginx-shared
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: odoo_restart_policy
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: odoo_restart_policy
+    name: Odoo Container Restart Policy
+    variable_type: o
+    option_ids:
+    - access_level: manager
+      reference: odoo_restart_policy_variable_option_1
+      sequence: 10
+      name: Do not restart
+      value_char: 'no'
+    - access_level: manager
+      reference: odoo_restart_policy_variable_option_2
+      sequence: 11
+      name: Restart if it was running
+      value_char: unless-stopped
+    - access_level: manager
+      reference: odoo_restart_policy_variable_option_3
+      sequence: 12
+      name: Always restart
+      value_char: always
+    applied_expression: false
+    validation_pattern: false
+    validation_message: false
+    note: |-
+      Restart policy of the Odoo Docker container.
+      Tells Docker what to do with the container after the host system was restarted.
+  value_char: always
+  required: false
+- cetmix_tower_model: variable_value
+  access_level: manager
+  reference: instance_certbot_email
+  sequence: 10
+  variable_id:
+    access_level: manager
+    reference: instance_certbot_email
+    name: Certbot Email for Instance
+    variable_type: s
+    applied_expression: false
+    validation_pattern: ^(?:[a-z0-9._%+-]+|{{[^{}]+}})(?:@(?:[a-z0-9.-]+\.[a-z]{2,}|{{[^{}]+}})|)(?:{%\s*(if|else|endif)\b[^%]*?%\})*$
+    validation_message: false
+    note: Used for certbot installation
+  value_char: certbot@yourdomain.example.com
+  required: false
