@@ -1,5 +1,9 @@
-requests
-packaging
+requests>=2.31.0
+packaging>=24.0
 paramiko>=3.0,<4.0
 tldextract==4.0.0
 dnspython
+cryptography>=42.0.0
+bcrypt>=4.1.2
+psutil>=5.9.8
+python-dateutil>=2.8.2
