@@ -1,8 +1,11 @@
+/** @odoo-module */
+
 import { isMobileOS } from "@web/core/browser/feature_detection";
 import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 import { patch } from "@web/core/utils/patch";
 import { ListRenderer } from "@web/views/list/list_renderer";
+import { PromoteStudioDialog } from "@ica_web_responsive/webclient/promote_studio_dialog/promote_studio_dialog";
 import { _t } from "@web/core/l10n/translation";
 import { onWillDestroy, useState } from "@odoo/owl";
 
@@ -57,9 +60,6 @@ export const patchListRendererDesktop = () => ({
                     // we set them to not editable too.
                     return false;
                 }
-                if (action.res_model === "account.bank.statement.line") {
-                    return false; // bank reconciliation isn't editable
-                }
                 return Boolean(action.res_model);
             };
             const onUiUpdated = () => {
@@ -83,6 +83,17 @@ export const patchListRendererDesktop = () => ({
 
     get displayOptionalFields() {
         return this.isStudioEditable() || super.displayOptionalFields;
+    },
+
+    /**
+     * This function opens promote studio dialog
+     *
+     * @private
+     */
+    onSelectedAddCustomField() {
+        this.env.services.dialog.add(PromoteStudioDialog, {
+            title: _t("Odoo Studio - Add new fields to any view"),
+        });
     },
 });
 

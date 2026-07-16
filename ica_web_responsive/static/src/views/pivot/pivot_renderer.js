@@ -1,3 +1,5 @@
+/** @odoo-module */
+
 import { patch } from "@web/core/utils/patch";
 import { PivotRenderer } from "@web/views/pivot/pivot_renderer";
 

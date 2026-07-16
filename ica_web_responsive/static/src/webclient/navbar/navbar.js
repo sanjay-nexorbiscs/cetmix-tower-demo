@@ -1,13 +1,15 @@
+/** @odoo-module **/
+
 import { NavBar } from "@web/webclient/navbar/navbar";
 import { useService, useBus } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
-import { useEffect, useRef } from "@odoo/owl";
+import { useState, useEffect, useRef } from "@odoo/owl";
 
 export class EnterpriseNavBar extends NavBar {
     static template = "ica_web_responsive.EnterpriseNavBar";
     setup() {
         super.setup();
-        this.hm = useService("home_menu");
+        this.hm = useState(useService("home_menu"));
         this.pwa = useService("pwa");
         this.menuAppsRef = useRef("menuApps");
         this.navRef = useRef("nav");

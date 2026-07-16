@@ -61,7 +61,6 @@ $component-active-bg: $o-gray-300 !default;
 
 // == Typography
 $mark-bg: #ffdebc !default;
-$mark-color: shift-color($mark-bg, -75%) !default;
 
 // == Tables
 $table-bg: $o-view-background-color !default;
@@ -120,7 +119,7 @@ $card-cap-bg: $o-view-background-color !default;
 
 
 // == Tooltips
-$tooltip-color: $o-gray-900 !default;
+$tooltip-color: $o-gray-800 !default;
 $tooltip-bg: $o-gray-300 !default;
 
 

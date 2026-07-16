@@ -1,3 +1,5 @@
+/** @odoo-module **/
+
 import { hasTouch, isIosApp, isMacOS } from "@web/core/browser/feature_detection";
 import { useHotkey } from "@web/core/hotkeys/hotkey_hook";
 import { user } from "@web/core/user";
@@ -347,9 +349,7 @@ export class HomeMenu extends Component {
     _onInputSearch() {
         const onClose = () => {
             this._focusInput();
-            if (this.inputRef.el) {
-                this.inputRef.el.value = "";
-            }
+            this.inputRef.el.value = "";
         };
         const searchValue = this.compositionStart ? "/" : `/${this.inputRef.el.value.trim()}`;
         this.compositionStart = false;
